@@ -1,0 +1,3 @@
+[submodule "inst/htmlwidgets/lib/d3-sankey"]
+	path = inst/htmlwidgets/lib/d3-sankey
+	url = https://github.com/fbreitwieser/d3-sankey

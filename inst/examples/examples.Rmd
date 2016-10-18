@@ -1,0 +1,20 @@
+---
+title: "R Markdown sankeyD3"
+output: 
+  html_document:
+    toc: true
+---
+
+# sankeyNetwork
+
+```{r}
+library(sankeyD3)
+URL <- "https://raw.githubusercontent.com/christophergandrud/d3Network/sankey/JSONdata/energy.json"
+Energy <- RCurl::getURL(URL, ssl.verifypeer = FALSE)
+EngLinks <- JSONtoDF(jsonStr = Energy, array = "links")
+EngNodes <- JSONtoDF(jsonStr = Energy, array = "nodes")
+
+sankeyNetwork(Links = EngLinks, Nodes = EngNodes, Source = "source",
+              Target = "target", Value = "value", NodeID = "name",
+              fontSize = 12, nodeWidth = 30)
+```
