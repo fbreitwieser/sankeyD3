@@ -170,7 +170,7 @@ sankeyNetwork <- function(Links, Nodes, Source, Target, Value,
     }
 
     if (is.character(NodePosX)) {
-        NodesDF$depth <- Nodes[, NodePosX]
+        NodesDF$posX <- Nodes[, NodePosX]
     }
 
     if (is.character(NodeValue)) {
