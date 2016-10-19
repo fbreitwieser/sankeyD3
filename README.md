@@ -4,9 +4,6 @@ Version 0.1
 
 This project is based on the Sankey implementation in [networkD3](https://github.com/christophergandrud/networkD3) and [d3-sankey](https://github.com/d3/d3-sankey).  
 
-![image](https://cloud.githubusercontent.com/assets/516060/19533346/5af9a822-960d-11e6-984c-333d20f2451f.png)
-
-
 Changelog:
  - ported to D3 v4
  - based on https://github.com/d3/d3-sankey 
@@ -22,6 +19,8 @@ Changelog:
  - zooming
  - dragging both horizontally and vertically
 
+The `inst/examples/shiny` web-app exposes several of the features:
+![image](https://cloud.githubusercontent.com/assets/516060/19533346/5af9a822-960d-11e6-984c-333d20f2451f.png)
  
 ## Usage
 
