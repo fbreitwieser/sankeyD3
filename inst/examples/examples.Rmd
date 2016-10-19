@@ -10,11 +10,9 @@ output:
 ```{r}
 library(sankeyD3)
 URL <- "https://raw.githubusercontent.com/christophergandrud/d3Network/sankey/JSONdata/energy.json"
-Energy <- RCurl::getURL(URL, ssl.verifypeer = FALSE)
-EngLinks <- JSONtoDF(jsonStr = Energy, array = "links")
-EngNodes <- JSONtoDF(jsonStr = Energy, array = "nodes")
+Energy <- jsonlite::fromJSON(URL)
 
-sankeyNetwork(Links = EngLinks, Nodes = EngNodes, Source = "source",
+sankeyNetwork(Links = Energy$links, Nodes = Energy$nodes, Source = "source",
               Target = "target", Value = "value", NodeID = "name",
-              fontSize = 12, nodeWidth = 30)
+              fontSize = 12, nodeWidth = 30, width = 300, height = 300)
 ```

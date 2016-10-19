@@ -20,7 +20,7 @@
 #' \code{Nodes}. Used to color the nodes in the network.
 #' @param LinkGroup character string specifying the groups in the
 #' \code{Links}. Used to color the links in the network.
-#' @param NodeDepth character specifying a column in the \code{Nodes} data
+#' @param NodePosX character specifying a column in the \code{Nodes} data
 #' frame that specifies the 0-based ordering of the nodes along the x-axis.
 #' @param NodeValue character specifying a column in the \code{Nodes} data
 #' frame with the value/size of each node. If \code{NULL}, the value is 
@@ -35,6 +35,7 @@
 #' @param nodeWidth numeric width of each node.
 #' @param nodePadding numeric essentially influences the width height.
 #' @param nodeStrokeWidth numeric width of the stroke around nodes.
+#' @param numberFormat number format in toolstips - see https://github.com/d3/d3-format for options
 #' @param margin an integer or a named \code{list}/\code{vector} of integers
 #' for the plot margins. If using a named \code{list}/\code{vector},
 #' the positions \code{top}, \code{right}, \code{bottom}, \code{left}
@@ -46,8 +47,7 @@
 #' @param iterations numeric. Number of iterations in the diagramm layout for 
 #' computation of the depth (y-position) of each node. Note: this runs in the 
 #' browser on the client so don't push it too high.
-#' @param sinksRight boolean. If \code{TRUE}, the last nodes are moved to the 
-#' right border of the plot.
+#' @param align character. TODO.
 #' @param zoom logical value to enable (\code{TRUE}) or disable (\code{FALSE})
 #' zooming
 #' @param bezierLink logical values if the links should be rendered by 
@@ -84,12 +84,12 @@
 #' @export
 
 sankeyNetwork <- function(Links, Nodes, Source, Target, Value, 
-    NodeID, NodeGroup = NodeID, LinkGroup = NULL, NodeDepth = NULL, NodeValue = NULL,
-    units = "", 
-    colourScale = JS("d3.scale.category20()"), fontSize = 7,  fontFamily = NULL, 
+    NodeID, NodeGroup = NodeID, LinkGroup = NULL, NodePosX = NULL, NodeValue = NULL,
+    units = "", colourScale = JS("d3.scaleOrdinal().range(d3.schemeCategory20)"), fontSize = 7,  fontFamily = NULL, 
     nodeWidth = 15, nodePadding = 10, nodeStrokeWidth = 1, margin = NULL, 
-    height = NULL, width = NULL, iterations = 32, sinksRight = TRUE, zoom = FALSE,
-    bezierLink = TRUE) 
+    numberFormat = ",.5g", orderByPath = FALSE, highlightChildLinks  = FALSE,
+    height = NULL, width = NULL, iterations = 32, zoom = FALSE, align = "center",
+    linkType = "bezier", curvature = .5, scaleNodeBreadthsByString = FALSE) 
 {
     # Check if data is zero indexed
     check_zero(Links[, Source], Links[, Target])
@@ -134,8 +134,8 @@ sankeyNetwork <- function(Links, Nodes, Source, Target, Value,
         NodesDF$group <- Nodes[, NodeGroup]
     }
 
-    if (is.character(NodeDepth)) {
-        NodesDF$depth <- Nodes[, NodeDepth]
+    if (is.character(NodePosX)) {
+        NodesDF$depth <- Nodes[, NodePosX]
     }
 
     if (is.character(NodeValue)) {
@@ -148,22 +148,27 @@ sankeyNetwork <- function(Links, Nodes, Source, Target, Value,
 
     margin <- margin_handler(margin)
     
+    message(align)
+    
     # create options
     options = list(NodeID = NodeID, NodeGroup = NodeGroup, LinkGroup = LinkGroup, 
         colourScale = colourScale, fontSize = fontSize, fontFamily = fontFamily, 
         nodeWidth = nodeWidth, nodePadding = nodePadding, nodeStrokeWidth = nodeStrokeWidth,
-        units = units, margin = margin, iterations = iterations, sinksRight = sinksRight, 
-        zoom = zoom, bezierLink = bezierLink)
+        numberFormat = numberFormat, orderByPath = orderByPath,
+        units = units, margin = margin, iterations = iterations, 
+        zoom = zoom, linkType = linkType, curvature = curvature,
+        highlightChildLinks = highlightChildLinks,
+        align = align, scaleNodeBreadthsByString = scaleNodeBreadthsByString)
     
     # create widget
     htmlwidgets::createWidget(name = "sankeyNetwork", x = list(links = LinksDF, 
         nodes = NodesDF, options = options), width = width, height = height, 
         htmlwidgets::sizingPolicy(padding = 10, browser.fill = TRUE), 
-        package = "networkD3")
+        package = "sankeyD3")
 }
 
 #' Title
-#' @rdname networkD3-shiny
+#' @rdname sankeyD3-shiny
 #'
 #' @param outputId 
 #' @param width 
@@ -174,16 +179,16 @@ sankeyNetwork <- function(Links, Nodes, Source, Target, Value,
 #'
 #' @examples
 sankeyNetworkOutput <- function(outputId, width = "100%", height = "500px") {
-    shinyWidgetOutput(outputId, "sankeyNetwork", width, height, 
-        package = "networkD3")
+    htmlwidgets::shinyWidgetOutput(outputId, "sankeyNetwork", width, height, 
+        package = "sankeyD3")
 }
 
-#' @rdname networkD3-shiny
+#' @rdname sankeyD3-shiny
 #' @export
 renderSankeyNetwork <- function(expr, env = parent.frame(), quoted = FALSE) {
     if (!quoted) 
         {
             expr <- substitute(expr)
         }  # force quoted
-    shinyRenderWidget(expr, sankeyNetworkOutput, env, quoted = TRUE)
+  htmlwidgets::shinyRenderWidget(expr, sankeyNetworkOutput, env, quoted = TRUE)
 }

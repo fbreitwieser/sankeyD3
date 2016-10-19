@@ -66,7 +66,7 @@ HTMLWidgets.widget({
         var height = el.getBoundingClientRect().height - margin.top - margin.bottom;
 
         // set this up even if zoom = F
-        var zoom = d3.behavior.zoom();    
+        var zoom = d3.zoom();    
 
         var color = eval(options.colourScale);
         
@@ -78,7 +78,7 @@ HTMLWidgets.widget({
           }
         }
 
-        var color_link = function color_link(d){
+        var color_link = function color_link(d) {
           if (d.group){
             return color(d.group);
           } else {
@@ -87,7 +87,7 @@ HTMLWidgets.widget({
         }
 
         var opacity_link_plus = 0.45;
-        var opacity_link = function opacity_link(d){
+        var opacity_link = function opacity_link(d) {
           if (d.group){
             return 0.5;
           } else {
@@ -95,19 +95,20 @@ HTMLWidgets.widget({
           }
         }
 
-
-        var formatNumber = d3.format(",.0f"),
-        format = function(d) { return formatNumber(d); }
+        format = function(d) { return d3.format(options.numberFormat)(d); }
 
         // create d3 sankey layout
         sankey
             .nodes(d3.values(nodes))
+            .align(options.align)
             .links(links)
             .size([width, height])
-            .bezierLink(options.bezierLink)
+            .linkType(options.linkType)
             .nodeWidth(options.nodeWidth)
             .nodePadding(options.nodePadding)
-            .sinksRight(options.sinksRight)
+            .scaleNodeBreadthsByString(options.scaleNodeBreadthsByString)
+            .curvature(options.curvature)
+            .orderByPath(options.orderByPath)
             .layout(options.iterations);
 
 
@@ -127,7 +128,9 @@ HTMLWidgets.widget({
                        //d.x + "," +
                       (d.y = Math.max(0, d3.event.y)) + ")");
             sankey.relayout();
-            link.attr("d", path);
+            
+            // update link path description
+            link.attr("d", draw_link);
         }
 
         // select the svg element and remove existing children or previously set viewBox attribute
@@ -145,8 +148,8 @@ HTMLWidgets.widget({
           zoom.on("zoom", redraw)
           function redraw() {
             d3.select(el).select(".zoom-layer").attr("transform",
-            "translate(" + d3.event.translate + ")"+
-            " scale(" + d3.event.scale + ")");
+            "translate(" + d3.event.transform.x + "," + d3.event.transform.y + ")"+
+            " scale(" + d3.event.transform.k + ")");
           }
       
           d3.select(el).select("svg")
@@ -162,29 +165,34 @@ HTMLWidgets.widget({
         }
 
         // draw path
-        var path = sankey.link();
+        var draw_link = sankey.link();
+        console.log(draw_link);
 
         // draw links
-        var link = svg.selectAll(".link")
-            .data(sankey.links())
+        var link = svg.selectAll(".link").data(sankey.links())
 
-        link.enter().append("path")
-            .attr("class", "link")
+        // new objects
+        var newLink = link.enter().append("path").attr("class", "link");
+        
+        link = newLink.merge(link);
+            
+        function min1_or_dy(d) {
+          return Math.max(1, d.dy);
+        }
 
-        if (options.bezierLink) {
-          link
-              .attr("d", path)
-              .style("stroke-width", function(d) { return Math.max(1, d.dy); })
-              .style("fill", "none")
-              .style("stroke", color_link)
-              .style("stroke-opacity", opacity_link);
+        if (options.linkType != "trapez") {
+          link.attr("d", draw_link)
+              .style("stroke",         color_link)
+              .style("stroke-width",   min1_or_dy)
+              .style("stroke-opacity", opacity_link)
+              .style("fill",           "none")
         } else {
-          link
-              .attr("d", path)
-              .style("fill", color_link)
+          link.attr("d", draw_link)
+              .style("fill",         color_link)
               .style("fill-opacity", opacity_link);
         }
 
+        
         path_filter = function(path, path1) { 
            return path1.lastIndexOf(path,0) === 0; 
         }
@@ -192,12 +200,20 @@ HTMLWidgets.widget({
         link
             .sort(function(a, b) { return b.dy - a.dy; })
             .on("mouseover", function(d) {
-                link.filter(function(d1, i) { return(path_filter(d.target.path, d1.target.path)) } )
+              var sel = d3.select(this);
+              if (options.highlightChildLinks) {
+                sel = link.filter(function(d1, i) { return(d == d1 || is_child(d.target, d1)); } )
+              }
+              sel
                 .style("stroke-opacity", function(d){return opacity_link(d) + opacity_link_plus})
                 .style("fill-opacity", function(d){return opacity_link(d) + opacity_link_plus});
             })
             .on("mouseout", function(d) {
-                link.filter(function(d1, i) { return(path_filter(d.target.path, d1.target.path)) })
+                var sel = d3.select(this);
+                if (options.highlightChildLinks) {
+                  sel = link.filter(function(d1, i) { return(d == d1 || is_child(d.target, d1)); } )
+                }
+                sel
                 .style("stroke-opacity", opacity_link)
                 .style("fill-opacity", opacity_link);
             });
@@ -215,38 +231,57 @@ HTMLWidgets.widget({
 
         // console.log(link);
         // console.log(node);
+        
+        function is_child (source_node, target_link) {
+          if (!source_node.sourceLinks) 
+            return false;
+          
+          for (var i=0; i < source_node.sourceLinks.length; i++) {
+            if (source_node.sourceLinks[i] == target_link || is_child(source_node.sourceLinks[i].target, target_link)) {
+              return true;
+            } 
+          }
+        }
 
-        node.enter().append("g")
+        var newNode = node.enter().append("g")
             .attr("class", "node")
             .attr("transform", function(d) { return "translate(" +
                                             d.x + "," + d.y + ")"; })
-            .call(d3.behavior.drag()
-            .origin(function(d) { return d; })
-            .on("dragstart", function() { 
+            .call(d3.drag()
+            .subject(function(d) { return d; })
+            .on("start", function() { 
                 dragstart(this);
                 this.parentNode.appendChild(this); 
             })
             .on("drag", dragmove))
             .on("mouseover", function(d) {
-                link.filter(function(d1, i) { return(path_filter(d.path, d1.source.path)) } )
-                 .style("stroke-opacity", function(d){return opacity_link(d) + opacity_link_plus})
-                 .style("fill-opacity", function(d){return opacity_link(d) + opacity_link_plus});
+                if (options.highlightChildLinks) {
+                  link.filter(function(d1, i) { return(is_child(d, d1)); } )
+                      .style("stroke-opacity", function(d){return opacity_link(d) + opacity_link_plus})
+                      .style("fill-opacity", function(d){return opacity_link(d) + opacity_link_plus});
+                }
             })
             .on("mouseout", function(d) {
-                link.filter(function(d1, i) { return(path_filter(d.path, d1.source.path)) } )
-                .style("stroke-opacity", opacity_link)
-                .style("fill-opacity", opacity_link);
+                if (options.highlightChildLinks) {
+                  link.filter(function(d1, i) { return(is_child(d, d1)); } )
+                      .style("stroke-opacity", opacity_link)
+                      .style("fill-opacity", opacity_link);
+                }
             })
             .on("click", function(d) {
                 Shiny.onInputChange(el.id + '_clicked', d.name)
             });
+        
+        node = newNode.merge(node);
+        
         // note: u2192 is right-arrow
         link.append("title")
             .text(function(d) { 
                 return d.source.name + " \u2192 " + d.target.name +
                 " \r\n" + format(d.value) + " " + options.units; });
 
-        node.append("rect")
+        node
+            .append("rect")
             .attr("height", function(d) { return d.dy; })
             .attr("width", sankey.nodeWidth())
             .style("fill", function(d) {
@@ -268,7 +303,8 @@ HTMLWidgets.widget({
                 return d.name + " \r\n" + format(d.value) + 
                 " " + options.units; });
 
-        node.append("text")
+        node
+            .append("text")
             .attr("x", - 1)
             .attr("y", function(d) { return d.dy / 2; })
             .attr("dy", ".35em")
@@ -277,12 +313,13 @@ HTMLWidgets.widget({
             .text(function(d) { return d.name; })
             .style("font-size", options.fontSize + "px")
             .style("font-family", options.fontFamily ? options.fontFamily : "inherit")
-            .filter(function(d) { return d.x < width / 2 || !options.sinksRight; })
+            .filter(function(d) { return d.x < width / 2 || (options.align == "none"); })
             .attr("x", 1 + sankey.nodeWidth())
             .attr("text-anchor", "start");
 
 
         // adjust viewBox to fit the bounds of our tree
+        /* // doesn't work with D3 v4
         var s = d3.select(svg[0][0].parentNode);
         s.attr(
             "viewBox",
@@ -319,7 +356,7 @@ HTMLWidgets.widget({
               ) + margin.top + margin.bottom
             ].join(",")
           );
-
+          */
 
     },
 });
