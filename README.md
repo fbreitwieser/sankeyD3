@@ -4,6 +4,9 @@ Version 0.1
 
 This project is based on the Sankey implementation in [networkD3](https://github.com/christophergandrud/networkD3) and [d3-sankey](https://github.com/d3/d3-sankey).  
 
+![image](https://cloud.githubusercontent.com/assets/516060/19533346/5af9a822-960d-11e6-984c-333d20f2451f.png)
+
+
 Changelog:
  - ported to D3 v4
  - based on https://github.com/d3/d3-sankey 
@@ -13,9 +16,11 @@ Changelog:
        - d3/d3-plugins#120: Added 'l-bezier' link type
        - d3/d3-plugins#74: Sort sankey target links by descending slope
        - d3/d3-sankey#4: Add horizontal alignment option to Sankey layout
- - added option numberFormat, default being ",.5g" (see , fixes #147)
- - added option NodePosX, fixes #108 
- - added option to force node ordering to be alphabetical along a path (only works well with trees with one parent for each node, but might fix #153)
+ - added option numberFormat, default being ",.5g" (see , fixes christophergandrud/networkD3#147)
+ - added option NodePosX, fixes christophergandrud/networkD3#108 
+ - added option to force node ordering to be alphabetical along a path (only works well with trees with one parent for each node, but might fix christophergandrud/networkD3#153)
+ - zooming
+ - dragging both horizontally and vertically
 
  
 ## Usage
