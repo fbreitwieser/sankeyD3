@@ -151,13 +151,12 @@ sankeyNetwork <- function(Links, Nodes, Source, Target, Value,
     if (missing(Target)) 
         Target = 2
     
+    LinksDF <- data.frame(source=Links[, Source], target = Links[, Target])
+    
     if (missing(Value)) {
-        LinksDF <- data.frame(Links[, Source], Links[, Target])
-        names(LinksDF) <- c("source", "target")
-    } else if (!missing(Value)) {
-        LinksDF <- data.frame(Links[, Source], Links[, Target], 
-            Links[, Value])
-        names(LinksDF) <- c("source", "target", "value")
+        LinksDF$value = 1
+    } else {
+        LinksDF$value <- Links[, Value]
     }
     
     # if NodeID is missing assume NodeID is the first column
