@@ -10,7 +10,7 @@ igraph_to_networkD3(g, group, what = "both")
 \item{g}{an \code{igraph} class graph object}
 
 \item{group}{an object that contains node group values, for example, those
-created with igraph's \code{\link{membership}} function.}
+created with igraph's \code{membership} function.}
 
 \item{what}{a character string specifying what to return. If
 \code{what = 'links'} or \code{what = 'nodes'} only the links or nodes are
@@ -37,9 +37,9 @@ members <- membership(wc)
 karate_d3 <- igraph_to_networkD3(karate, group = members)
 
 # Create force directed network plot
-forceNetwork(Links = karate_d3$links, Nodes = karate_d3$nodes,
+sankeyNetwork(Links = karate_d3$links, Nodes = karate_d3$nodes,
              Source = 'source', Target = 'target', NodeID = 'name',
-             Group = 'group')
+             NodeGroup = 'group')
 
 \dontrun{
 # Example with data from data frame
@@ -61,9 +61,9 @@ members <- membership(wt)
 sj_list <- igraph_to_networkD3(SchoolsJournals, group = members)
 
 # Plot as a forceDirected Network
-forceNetwork(Links = sj_list$links, Nodes = sj_list$nodes, Source = 'source',
-             Target = 'target', NodeID = 'name', Group = 'group',
-             zoom = TRUE, linkDistance = 200)
+sankeyNetwork(Links = sj_list$links, Nodes = sj_list$nodes, Source = 'source',
+             Target = 'target', NodeID = 'name', NodeGroup = 'group',
+             zoom = TRUE)
 }
 
 }

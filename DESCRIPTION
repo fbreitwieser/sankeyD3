@@ -27,6 +27,7 @@ Imports:
     magrittr
 Suggests:
     htmltools (>= 0.2.6),
+    igraph,
     jsonlite
 Enhances: knitr, shiny
 LazyData: true

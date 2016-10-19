@@ -1,3 +1,33 @@
+#' Tools for Creating D3 Sankey Graphs from R
+#'
+#' Creates D3 JavaScript Sankey graphs from R. Based on networkD3.
+#'
+#' @name sankeyD3-package
+#' @aliases sankeyD3
+#' @docType package
+NULL
+
+
+#' Shiny bindings for sankeyD3 widgets
+#'
+#' Output and render functions for using sankeyD3 widgets within Shiny
+#' applications and interactive Rmd documents.
+#'
+#' @param outputId output variable to read from
+#' @param width,height Must be a valid CSS unit (like \code{"100\%"},
+#'   \code{"400px"}, \code{"auto"}) or a number, which will be coerced to a
+#'   string and have \code{"px"} appended.
+#' @param expr An expression that generates a sankeyD3 graph
+#' @param env The environment in which to evaluate \code{expr}.
+#' @param quoted Is \code{expr} a quoted expression (with \code{quote()})? This
+#'   is useful if you want to save an expression in a variable.
+#'
+#' @importFrom htmlwidgets shinyWidgetOutput
+#' @importFrom htmlwidgets shinyRenderWidget
+#'
+#' @name sankeyD3-shiny
+NULL
+
 #' Create a D3 JavaScript Sankey diagram
 #'
 #' @param Links a data frame object with the links between the nodes. It should
@@ -47,11 +77,18 @@
 #' @param iterations numeric. Number of iterations in the diagramm layout for 
 #' computation of the depth (y-position) of each node. Note: this runs in the 
 #' browser on the client so don't push it too high.
-#' @param align character. TODO.
+#' @param align character Alignment of the nodes. One of 'right', 'left', 'justify', 'center', 'none'.
+#' If 'none', then the labels of the nodes are always to the right of the node.
 #' @param zoom logical value to enable (\code{TRUE}) or disable (\code{FALSE})
 #' zooming
-#' @param bezierLink logical values if the links should be rendered by 
-#' bezier curves, or just trapzoids.
+#' @param linkType character One of 'bezier', 'l-bezier', and trapezoid.
+#' @param orderByPath Order the nodes vertically along a path - this layout only
+#' works well for trees where each node has maximum one parent.
+#' @param highlightChildLinks Highlight all the links going right from a node or 
+#' link.
+#' @param curvature numeric Curvature parameter for bezier links - between 0 and 1.
+#' @param scaleNodeBreadthsByString Put nodes at positions relatively to string lengths - 
+#' only work well currently with align='none'
 #'
 #' @examples
 #' \dontrun{
@@ -82,7 +119,6 @@
 #' @seealso \code{\link{JS}}
 #'
 #' @export
-
 sankeyNetwork <- function(Links, Nodes, Source, Target, Value, 
     NodeID, NodeGroup = NodeID, LinkGroup = NULL, NodePosX = NULL, NodeValue = NULL,
     units = "", colourScale = JS("d3.scaleOrdinal().range(d3.schemeCategory20)"), fontSize = 7,  fontFamily = NULL, 
@@ -167,17 +203,8 @@ sankeyNetwork <- function(Links, Nodes, Source, Target, Value,
         package = "sankeyD3")
 }
 
-#' Title
 #' @rdname sankeyD3-shiny
-#'
-#' @param outputId 
-#' @param width 
-#' @param height 
-#'
-#' @return
 #' @export
-#'
-#' @examples
 sankeyNetworkOutput <- function(outputId, width = "100%", height = "500px") {
     htmlwidgets::shinyWidgetOutput(outputId, "sankeyNetwork", width, height, 
         package = "sankeyD3")

@@ -89,7 +89,7 @@ margin_handler <- function(margin){
     }
     # if we are here then margin should be a list and
     #   we will use the values supplied with NULL as default
-    margin <- modifyList(
+    margin <- utils::modifyList(
       list(top = NULL, right = NULL, bottom = NULL, left = NULL),
       margin
     )
@@ -104,7 +104,7 @@ margin_handler <- function(margin){
 #'
 #' @param g an \code{igraph} class graph object
 #' @param group an object that contains node group values, for example, those
-#' created with igraph's \code{\link{membership}} function.
+#' created with igraph's \code{membership} function.
 #' @param what a character string specifying what to return. If
 #' \code{what = 'links'} or \code{what = 'nodes'} only the links or nodes are
 #' returned as data frames, respectively. If \code{what = 'both'} then both
@@ -126,9 +126,9 @@ margin_handler <- function(margin){
 #' karate_d3 <- igraph_to_networkD3(karate, group = members)
 #'
 #' # Create force directed network plot
-#' forceNetwork(Links = karate_d3$links, Nodes = karate_d3$nodes,
+#' sankeyNetwork(Links = karate_d3$links, Nodes = karate_d3$nodes,
 #'              Source = 'source', Target = 'target', NodeID = 'name',
-#'              Group = 'group')
+#'              NodeGroup = 'group')
 #'
 #' \dontrun{
 #' # Example with data from data frame
@@ -150,16 +150,16 @@ margin_handler <- function(margin){
 #' sj_list <- igraph_to_networkD3(SchoolsJournals, group = members)
 #'
 #' # Plot as a forceDirected Network
-#' forceNetwork(Links = sj_list$links, Nodes = sj_list$nodes, Source = 'source',
-#'              Target = 'target', NodeID = 'name', Group = 'group',
-#'              zoom = TRUE, linkDistance = 200)
+#' sankeyNetwork(Links = sj_list$links, Nodes = sj_list$nodes, Source = 'source',
+#'              Target = 'target', NodeID = 'name', NodeGroup = 'group',
+#'              zoom = TRUE)
 #' }
 #'
-#' @importFrom igraph V as_data_frame graph.data.frame simplify cluster_walktrap membership
 #' @importFrom magrittr %>%
+#' @importFrom stats setNames
 #' @export
-
 igraph_to_networkD3 <- function(g, group, what = 'both') {
+    requireNamespace("igraph")
     # Sanity check
     if (!('igraph' %in% class(g))) stop('g must be an igraph class object.',
                                       call. = FALSE)
@@ -167,7 +167,7 @@ igraph_to_networkD3 <- function(g, group, what = 'both') {
                                                      call. = FALSE)
 
     # Extract vertices (nodes)
-    temp_nodes <- V(g) %>% as.matrix %>% data.frame
+    temp_nodes <- igraph::V(g) %>% as.matrix %>% data.frame
     temp_nodes$name <- row.names(temp_nodes)
     names(temp_nodes) <- c('id', 'name')
 
@@ -186,7 +186,7 @@ igraph_to_networkD3 <- function(g, group, what = 'both') {
     row.names(nodes) <- NULL
 
     # Convert links from names to numbers
-    links <- as_data_frame(g, what = 'edges')
+    links <- igraph::as_data_frame(g, what = 'edges')
     links <- merge(links, temp_nodes, by.x = 'from', by.y = 'name')
     links <- merge(links, temp_nodes, by.x = 'to', by.y = 'name')
     if (ncol(links) == 5) {

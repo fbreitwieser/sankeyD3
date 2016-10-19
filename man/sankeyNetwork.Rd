@@ -9,11 +9,13 @@ specifically for Sankey diagrams \url{http://bost.ocks.org/mike/sankey/}.
 }
 \usage{
 sankeyNetwork(Links, Nodes, Source, Target, Value, NodeID, NodeGroup = NodeID,
-  LinkGroup = NULL, NodeDepth = NULL, NodeValue = NULL, units = "",
-  colourScale = JS("d3.scale.category20()"), fontSize = 7,
-  fontFamily = NULL, nodeWidth = 15, nodePadding = 10,
-  nodeStrokeWidth = 1, margin = NULL, height = NULL, width = NULL,
-  iterations = 32, sinksRight = TRUE, zoom = FALSE, bezierLink = TRUE)
+  LinkGroup = NULL, NodePosX = NULL, NodeValue = NULL, units = "",
+  colourScale = JS("d3.scaleOrdinal().range(d3.schemeCategory20)"),
+  fontSize = 7, fontFamily = NULL, nodeWidth = 15, nodePadding = 10,
+  nodeStrokeWidth = 1, margin = NULL, numberFormat = ",.5g",
+  orderByPath = FALSE, highlightChildLinks = FALSE, height = NULL,
+  width = NULL, iterations = 32, zoom = FALSE, align = "center",
+  linkType = "bezier", curvature = 0.5, scaleNodeBreadthsByString = FALSE)
 }
 \arguments{
 \item{Links}{a data frame object with the links between the nodes. It should
@@ -44,7 +46,7 @@ data frame. Must be 0-indexed.}
 \item{LinkGroup}{character string specifying the groups in the
 \code{Links}. Used to color the links in the network.}
 
-\item{NodeDepth}{character specifying a column in the \code{Nodes} data
+\item{NodePosX}{character specifying a column in the \code{Nodes} data
 frame that specifies the 0-based ordering of the nodes along the x-axis.}
 
 \item{NodeValue}{character specifying a column in the \code{Nodes} data
@@ -75,6 +77,14 @@ are valid.  If a single integer is provided, then the value will be
 assigned to the right margin. Set the margin appropriately
 to accomodate long text labels.}
 
+\item{numberFormat}{number format in toolstips - see https://github.com/d3/d3-format for options}
+
+\item{orderByPath}{Order the nodes vertically along a path - this layout only
+works well for trees where each node has maximum one parent.}
+
+\item{highlightChildLinks}{Highlight all the links going right from a node or 
+link.}
+
 \item{height}{numeric height for the network graph's frame area in pixels.}
 
 \item{width}{numeric width for the network graph's frame area in pixels.}
@@ -83,14 +93,18 @@ to accomodate long text labels.}
 computation of the depth (y-position) of each node. Note: this runs in the 
 browser on the client so don't push it too high.}
 
-\item{sinksRight}{boolean. If \code{TRUE}, the last nodes are moved to the 
-right border of the plot.}
-
 \item{zoom}{logical value to enable (\code{TRUE}) or disable (\code{FALSE})
 zooming}
 
-\item{bezierLink}{logical values if the links should be rendered by 
-bezier curves, or just trapzoids.}
+\item{align}{character Alignment of the nodes. One of 'right', 'left', 'justify', 'center', 'none'.
+If 'none', then the labels of the nodes are always to the right of the node.}
+
+\item{linkType}{character One of 'bezier', 'l-bezier', and trapezoid.}
+
+\item{curvature}{numeric Curvature parameter for bezier links - between 0 and 1.}
+
+\item{scaleNodeBreadthsByString}{Put nodes at positions relatively to string lengths - 
+only work well currently with align='none'}
 }
 \description{
 Create a D3 JavaScript Sankey diagram

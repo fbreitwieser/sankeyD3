@@ -166,7 +166,6 @@ HTMLWidgets.widget({
 
         // draw path
         var draw_link = sankey.link();
-        console.log(draw_link);
 
         // draw links
         var link = svg.selectAll(".link").data(sankey.links())
@@ -229,9 +228,6 @@ HTMLWidgets.widget({
         var node = svg.selectAll(".node")
             .data(sankey.nodes())
 
-        // console.log(link);
-        // console.log(node);
-        
         function is_child (source_node, target_link) {
           if (!source_node.sourceLinks) 
             return false;
