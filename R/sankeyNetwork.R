@@ -124,7 +124,7 @@ sankeyNetwork <- function(Links, Nodes, Source, Target, Value,
     units = "", colourScale = JS("d3.scaleOrdinal().range(d3.schemeCategory20)"), fontSize = 7,  fontFamily = NULL, 
     nodeWidth = 15, nodePadding = 10, nodeStrokeWidth = 1, margin = NULL, 
     numberFormat = ",.5g", orderByPath = FALSE, highlightChildLinks  = FALSE,
-    height = NULL, width = NULL, iterations = 32, zoom = FALSE, align = "center",
+    height = NULL, width = NULL, iterations = 32, zoom = FALSE, align = "justify",
     linkType = "bezier", curvature = .5, scaleNodeBreadthsByString = FALSE) 
 {
     # Check if data is zero indexed
@@ -182,8 +182,6 @@ sankeyNetwork <- function(Links, Nodes, Source, Target, Value,
     }
 
     margin <- margin_handler(margin)
-    
-    message(align)
     
     # create options
     options = list(NodeID = NodeID, NodeGroup = NodeGroup, LinkGroup = LinkGroup, 

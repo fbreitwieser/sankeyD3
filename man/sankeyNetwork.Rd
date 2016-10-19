@@ -14,7 +14,7 @@ sankeyNetwork(Links, Nodes, Source, Target, Value, NodeID, NodeGroup = NodeID,
   fontSize = 7, fontFamily = NULL, nodeWidth = 15, nodePadding = 10,
   nodeStrokeWidth = 1, margin = NULL, numberFormat = ",.5g",
   orderByPath = FALSE, highlightChildLinks = FALSE, height = NULL,
-  width = NULL, iterations = 32, zoom = FALSE, align = "center",
+  width = NULL, iterations = 32, zoom = FALSE, align = "justify",
   linkType = "bezier", curvature = 0.5, scaleNodeBreadthsByString = FALSE)
 }
 \arguments{
