@@ -94,7 +94,6 @@ d3.sankey = function() {
   // SVG path data generator, to be used as "d" attribute on "path" element selection.
   sankey.link = function() {
     function link(d) {
-      console.log(d)
       var x0 = d.source.x + d.source.dx,
           x1 = d.target.x,
           xi = d3.interpolateNumber(x0, x1),
@@ -188,6 +187,7 @@ d3.sankey = function() {
   }
 
   var summed_str_length = [0];
+  var max_posX;
 
   // Iteratively assign the breadth (x-position) for each node.
   // Nodes are assigned the maximum breadth of incoming neighbors plus one;
@@ -231,11 +231,12 @@ d3.sankey = function() {
     } else {
         nodes.forEach(function(node) {
             node.x = node.posX;
+            node.dx = nodeWidth;
         });
     }
     
     // calculate maximum string lengths at each posX
-    var max_posX = d3.max(nodes, function(d) { return(d.posX); } ) + 1;
+    max_posX= d3.max(nodes, function(d) { return(d.posX); } ) + 1;
     var max_str_length = new Array(max_posX);
     nodes.forEach(function(node) {
         if (typeof max_str_length[node.x] == "undefined" || node.name.length > max_str_length[node.x]) {
