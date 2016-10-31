@@ -1,0 +1,38 @@
+sankeyD3 v0.2 (Release date: 2016-10-30)
+==========
+
+Changes:
+
+ - Added two new path drawing options, 'path1' and 'path2'
+    based on d3-plugins PR #36 from @ghedamat and PR #40 by @cmorse.
+    The standard bezier curve has difficulties when the thickness of the    path is large relative to the node distance. These paths are drawn with individual bezier curves, which may not give equal area along its width, but always works.
+ - Added option showNodeValues to show node values above nodes
+ - Added option nodeCornerRadius for rounded nodes
+ - Added option title for titles in the upper-right corner of the plot
+ - Added <sankey id>_hover event that is fired every 2 seconds
+ - Added option doubleclickTogglesChildren to hide children/downstram
+    nodes
+ - Added option xScalingFactor to scale width between nodes
+ - Added option xAxisDomain to make an x-axis
+
+
+sankeyD3 v0.1 (Release date: 2016-10-20)
+========================================
+
+Changes:
+
+ - ported to D3 v4
+ - based on https://github.com/d3/d3-sankey 
+     - added several modifications from networkD3 sankey.js 
+     - included fixes and features from unmerged pull requests:
+       - d3/d3-plugins#124: Fix nodesByBreadth to have proper ordering
+       - d3/d3-plugins#120: Added 'l-bezier' link type
+       - d3/d3-plugins#74: Sort sankey target links by descending slope
+       - d3/d3-sankey#4: Add horizontal alignment option to Sankey layout
+ - added option numberFormat, default being ",.5g" (see , fixes christophergandrud/networkD3#147)
+ - added option NodePosX, fixes christophergandrud/networkD3#108 
+ - added option to force node ordering to be alphabetical along a path (only works well with trees with one parent for each node, but might fix christophergandrud/networkD3#153)
+ - zooming
+ - dragging both horizontally and vertically
+
+

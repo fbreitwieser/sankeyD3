@@ -86,8 +86,14 @@ HTMLWidgets.widget({
           }
         }
 
+        var animation_duration = 50;
+        var opacity_node = 1;
         var opacity_link_plus = 0.45;
+        
         var opacity_link = function opacity_link(d) {
+          if (d.inactive) {
+            return 0;
+          }
           if (d.group){
             return 0.5;
           } else {
@@ -95,22 +101,52 @@ HTMLWidgets.widget({
           }
         }
 
-        format = function(d) { return d3.format(options.numberFormat)(d); }
+        format = function(d) { 
+          if (options.numberFormat == "pavian") {
+            var formated_num;
+            if (d > 1000) {
+              formated_num = d3.format(".3s")(d);
+            } else if (d > 0.001) {
+              formated_num = d3.format(".3r")(d);
+            } else {
+              formated_num = d3.format(".3g")(d);
+            }
+              
+            if (formated_num.indexOf('.') >= 0) {
+              if (formated_num.search(/[0-9]$/ >= 0)) {
+                formated_num = formated_num.replace(/0+$/, "");
+                formated_num = formated_num.replace(/\.$/, "");
+              } else {
+                formated_num = formated_num.replace(/0+(.)/, "$1");
+                formated_num = formated_num.replace(/\.(.)/, "$1");
+              }
+            }
+            
+          } else {
+            formated_num = d3.format(options.numberFormat)(d);
+          }
+          return formated_num;
+        }
 
         // create d3 sankey layout
         sankey
             .nodes(d3.values(nodes))
             .align(options.align)
             .links(links)
-            .size([width, height])
+            .size([width, height - 20])
             .linkType(options.linkType)
             .nodeWidth(options.nodeWidth)
             .nodePadding(options.nodePadding)
             .scaleNodeBreadthsByString(options.scaleNodeBreadthsByString)
             .curvature(options.curvature)
             .orderByPath(options.orderByPath)
+            .showNodeValues(options.showNodeValues)
+            .nodeCornerRadius(options.nodeCornerRadius)
             .layout(options.iterations);
 
+
+        var max_posX = d3.max(sankey.nodes(), function(d) { return d.posX; });
+        sankey.nodes().forEach(function(node) { node.x = node.x * options.xScalingFactor; });
 
         // thanks http://plnkr.co/edit/cxLlvIlmo1Y6vJyPs6N9?p=preview
         //  http://stackoverflow.com/questions/22924253/adding-pan-zoom-to-d3js-force-directed
@@ -163,6 +199,18 @@ HTMLWidgets.widget({
           zoom.on("zoom", null);
  
         }
+        
+        if (typeof options.title != "undefined") {
+          svg.append("text")
+            .attr("dy", ".5em")
+            .attr("render-order", -1)
+            .text(options.title)
+            .style("cursor", "move")
+            .style("fill", "black")
+            .style("font-size", "28px")
+            .style("font-family", options.fontFamily ? options.fontFamily : "inherit");
+            
+        }
 
         // draw path
         var draw_link = sankey.link();
@@ -179,7 +227,7 @@ HTMLWidgets.widget({
           return Math.max(1, d.dy);
         }
 
-        if (options.linkType != "trapez") {
+        if (options.linkType == "bezier" || options.linkType == "l-bezier") {
           link.attr("d", draw_link)
               .style("stroke",         color_link)
               .style("stroke-width",   min1_or_dy)
@@ -199,6 +247,7 @@ HTMLWidgets.widget({
         link
             .sort(function(a, b) { return b.dy - a.dy; })
             .on("mouseover", function(d) {
+              if (d.inactive) return;
               var sel = d3.select(this);
               if (options.highlightChildLinks) {
                 sel = link.filter(function(d1, i) { return(d == d1 || is_child(d.target, d1)); } )
@@ -208,6 +257,7 @@ HTMLWidgets.widget({
                 .style("fill-opacity", function(d){return opacity_link(d) + opacity_link_plus});
             })
             .on("mouseout", function(d) {
+              if (d.inactive) return;
                 var sel = d3.select(this);
                 if (options.highlightChildLinks) {
                   sel = link.filter(function(d1, i) { return(d == d1 || is_child(d.target, d1)); } )
@@ -229,20 +279,25 @@ HTMLWidgets.widget({
             .data(sankey.nodes())
 
         function is_child (source_node, target_link) {
-          if (!source_node.sourceLinks) 
-            return false;
-          
           for (var i=0; i < source_node.sourceLinks.length; i++) {
             if (source_node.sourceLinks[i] == target_link || is_child(source_node.sourceLinks[i].target, target_link)) {
               return true;
             } 
           }
+          return false;
+        }
+        function is_child_node (source_node, target_node) {
+          for (var i=0; i < source_node.sourceLinks.length; i++) {
+            if (source_node.sourceLinks[i].target == target_node || is_child_node(source_node.sourceLinks[i].target, target_node)) {
+              return true;
+            } 
+          }
+          return false;
         }
 
         var newNode = node.enter().append("g")
             .attr("class", "node")
-            .attr("transform", function(d) { return "translate(" +
-                                            d.x + "," + d.y + ")"; })
+            .attr("transform", function(d) { return "translate(" + d.x + "," + d.y + ")"; })  // change here if you wanna change
             .call(d3.drag()
             .subject(function(d) { return d; })
             .on("start", function() { 
@@ -250,22 +305,95 @@ HTMLWidgets.widget({
                 this.parentNode.appendChild(this); 
             })
             .on("drag", dragmove))
-            .on("mouseover", function(d) {
-                if (options.highlightChildLinks) {
+            .on("mouseover", function(d,i) {
+              if (d.inactive) return;
+              
+              if (options.highlightChildLinks) {
                   link.filter(function(d1, i) { return(is_child(d, d1)); } )
                       .style("stroke-opacity", function(d){return opacity_link(d) + opacity_link_plus})
                       .style("fill-opacity", function(d){return opacity_link(d) + opacity_link_plus});
-                }
+              }
+              
+             var t = setTimeout(function() {
+               Shiny.onInputChange(el.id + '_hover', d.name);
+             }, 1000);
+             $(this).data('timeout', t);
+
             })
-            .on("mouseout", function(d) {
-                if (options.highlightChildLinks) {
+            .on("mouseout", function(d,i) {
+              clearTimeout($(this).data('timeout')); // Clear hover timeout when the mouse leaves the node
+
+              if (d.inactive) return;
+              if (options.highlightChildLinks) {
                   link.filter(function(d1, i) { return(is_child(d, d1)); } )
                       .style("stroke-opacity", opacity_link)
                       .style("fill-opacity", opacity_link);
-                }
+              }
             })
             .on("click", function(d) {
-                Shiny.onInputChange(el.id + '_clicked', d.name)
+               Shiny.onInputChange(el.id + '_clicked', d.name);
+            })
+            .on("dblclick", function(d) {
+               Shiny.onInputChange(el.id + '_clicked', d.name);
+               if (!options.doubleclickTogglesChildren) {
+                 return;
+               }
+               d.inactive = !d.inactive;
+
+               if (d.inactive) {
+                 d3.select(this).selectAll('rect').style("stroke-width",options.nodeStrokeWidth+2)
+                 d3.select(this).selectAll('text').style('font-weight', 'bold');
+               } else {
+                 d3.select(this).selectAll('rect').style("stroke-width",options.nodeStrokeWidth)
+                 d3.select(this).selectAll('text').style('font-weight', 'normal');
+               }
+               
+               /* Draft of a transform animation of the links - not working currently
+               if (d.inactive) {
+                link.filter(function(d1, i) { if(is_child(d, d1)) { d1.inactive = d.inactive; return true; } else { return false; }} )
+                 .attr("transform", "scale(1, 1)")
+                  .transition().duration(500)
+                  .delay(function(d1) { 
+                    var delay = (d1.source.posX - d.posX )*100 + 50; 
+                    if (!d.inactive) delay = 500 - delay;
+                    return delay
+                  } )
+                  .attr("transform", "scale(0, 1)");
+               } else {
+                 link.filter(function(d1, i) { if(is_child(d, d1)) { d1.inactive = d.inactive; return true; } else { return false; }} )
+                  .attr("transform", "scale(0, 1)")
+                  .transition().duration(500)
+                  .delay(function(d1) { 
+                    var delay = (d1.source.posX - d.posX )*100 + 50; 
+                    if (!d.inactive) delay = 500 - delay;
+                    return delay
+                  } )
+                  .attr("transform", "scale(1, 1)");
+                  
+               } */
+               
+               var max_delay = (max_posX - d.posX) * animation_duration;
+               
+               link.filter(function(d1, i) { if(is_child(d, d1)) { d1.inactive = d.inactive; return true; } else { return false; }} )
+                 .transition().duration(max_delay)
+                  .delay(function(d1) { 
+                    var delay = (d1.source.posX - d.posX + .5)*animation_duration; 
+                    if (d.inactive) delay = max_delay - delay;
+                    return delay
+                  } )
+                  .style("stroke-opacity", opacity_link)
+                  .style("fill-opacity",   opacity_link);
+               
+               var new_opacity = d.inactive? 0 : opacity_node;
+               node.filter(function(d1, i) { if(is_child_node(d, d1)) { d1.inactive = d.inactive; return true; } else { return false; }} )
+                  .transition().duration(max_delay)
+                  .delay(function(d1) { 
+                    var delay = (d1.posX - d.posX + .5)*animation_duration; 
+                    if (d.inactive) delay = max_delay - delay;
+                    return delay
+                  })
+                  .style("opacity", new_opacity);
+               
             });
         
         node = newNode.merge(node);
@@ -290,8 +418,10 @@ HTMLWidgets.widget({
                 })
             .style("stroke", function(d) { return d3.rgb(d.color).darker(2); })
             .style("stroke-width", options.nodeStrokeWidth)
-            .style("opacity", 0.9)
+            .style("opacity", opacity_node )
             .style("cursor", "move")
+            .attr("rx", options.nodeCornerRadius)
+            .attr("ry", options.nodeCornerRadius)
             .append("title")
             .attr("class", "tooltip")
             .attr("title", function(d) { return format(d.value); })
@@ -301,18 +431,53 @@ HTMLWidgets.widget({
 
         node
             .append("text")
-            .attr("x", - 1)
+            .attr("x", - 2)
             .attr("y", function(d) { return d.dy / 2; })
+            .attr("class", "node-text")
             .attr("dy", ".35em")
             .attr("text-anchor", "end")
             .attr("transform", null)
             .text(function(d) { return d.name; })
+            .style("cursor", "move")
             .style("font-size", options.fontSize + "px")
             .style("font-family", options.fontFamily ? options.fontFamily : "inherit")
             .filter(function(d) { return d.x < width / 2 || (options.align == "none"); })
-            .attr("x", 1 + sankey.nodeWidth())
+            .attr("x", 2 + sankey.nodeWidth())
             .attr("text-anchor", "start");
+            
+        if (options.showNodeValues) {
+          node
+            .append("text")
+            .attr("x", sankey.nodeWidth()/2)
+            .attr("text-anchor", "middle")
+            .attr("dy", "-.1em")
+            .attr("transform", null)
+            .attr("class", "node-number")
+            .text(function(d) { return format(d.value); })
+            .style("cursor", "move")
+            .style("font-size", ( options.fontSize - 2) + "px")
+            .style("font-family", options.fontFamily ? options.fontFamily : "inherit");
+        }
+        
+        
+        // Create an array with values from 1 to max_posX
+        //var axis_domain = new Array(max_posX + 1)
+        //  .join().split(',')
+        //  .map(function(item, index){ return ++index;})
 
+        
+        if (options.xAxisDomain) {
+          
+          var axisXPos = new Array(options.xAxisDomain.length);
+          sankey.nodes().forEach(function(node) { axisXPos[node.posX] = node.x + options.nodeWidth/2; });
+
+          console.log([options.xAxisDomain,axisXPos])
+
+          var x = d3.scaleOrdinal().domain(options.xAxisDomain).range(axisXPos);
+          svg.append("g").attr("class", "x axis")
+             .attr("transform", "translate(0," + height + ")")  // move into position
+             .call(d3.axisBottom(x));
+        }
 
         // adjust viewBox to fit the bounds of our tree
         /* // doesn't work with D3 v4

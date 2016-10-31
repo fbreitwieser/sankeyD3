@@ -65,7 +65,8 @@ NULL
 #' @param nodeWidth numeric width of each node.
 #' @param nodePadding numeric essentially influences the width height.
 #' @param nodeStrokeWidth numeric width of the stroke around nodes.
-#' @param numberFormat number format in toolstips - see https://github.com/d3/d3-format for options
+#' @param nodeCornerRadius numberic Radius for rounded nodes.
+#' @param numberFormat number format in toolstips - see https://github.com/d3/d3-format for options.
 #' @param margin an integer or a named \code{list}/\code{vector} of integers
 #' for the plot margins. If using a named \code{list}/\code{vector},
 #' the positions \code{top}, \code{right}, \code{bottom}, \code{left}
@@ -74,6 +75,7 @@ NULL
 #' to accomodate long text labels.
 #' @param height numeric height for the network graph's frame area in pixels.
 #' @param width numeric width for the network graph's frame area in pixels.
+#' @param title character Title of plot, put in the upper-left corner of the Sankey 
 #' @param iterations numeric. Number of iterations in the diagramm layout for 
 #' computation of the depth (y-position) of each node. Note: this runs in the 
 #' browser on the client so don't push it too high.
@@ -81,12 +83,18 @@ NULL
 #' If 'none', then the labels of the nodes are always to the right of the node.
 #' @param zoom logical value to enable (\code{TRUE}) or disable (\code{FALSE})
 #' zooming
-#' @param linkType character One of 'bezier', 'l-bezier', and trapezoid.
-#' @param orderByPath Order the nodes vertically along a path - this layout only
+#' @param xScalingFactor numeric Scale the computed x position of the nodes by this value.
+#' @param xAxisDomain character[] If xAxisDomain is given, an axis with those value is 
+#' added to the bottom of the plot. Only sensible when also NodeXPos are given.
+#' @param linkType character One of 'bezier', 'l-bezier', 'trapezoid', 'path1' and 'path2'.
+#' @param orderByPath boolean Order the nodes vertically along a path - this layout only
 #' works well for trees where each node has maximum one parent.
-#' @param highlightChildLinks Highlight all the links going right from a node or 
+#' @param highlightChildLinks boolean Highlight all the links going right from a node or 
 #' link.
+#' @param doubleclickTogglesChildren boolean Show/hide target nodes and paths to the left
+#'  on double-click. Does not hide incoming links of target nodes, yet.
 #' @param curvature numeric Curvature parameter for bezier links - between 0 and 1.
+#' @param showNodeValues boolean Show values above nodes. Might require and increased node margin.
 #' @param scaleNodeBreadthsByString Put nodes at positions relatively to string lengths - 
 #' only work well currently with align='none'
 #'
@@ -122,10 +130,13 @@ NULL
 sankeyNetwork <- function(Links, Nodes, Source, Target, Value, 
     NodeID, NodeGroup = NodeID, LinkGroup = NULL, NodePosX = NULL, NodeValue = NULL,
     units = "", colourScale = JS("d3.scaleOrdinal().range(d3.schemeCategory20)"), fontSize = 7,  fontFamily = NULL, 
-    nodeWidth = 15, nodePadding = 10, nodeStrokeWidth = 1, margin = NULL, 
+    nodeWidth = 15, nodePadding = 10, nodeStrokeWidth = 1, nodeCornerRadius = 0,
+    margin = NULL, title = NULL,
     numberFormat = ",.5g", orderByPath = FALSE, highlightChildLinks  = FALSE,
+    doubleclickTogglesChildren = FALSE, xAxisDomain = NULL,
     height = NULL, width = NULL, iterations = 32, zoom = FALSE, align = "justify",
-    linkType = "bezier", curvature = .5, scaleNodeBreadthsByString = FALSE) 
+    showNodeValues = TRUE, linkType = "bezier", curvature = .5, 
+    scaleNodeBreadthsByString = FALSE, xScalingFactor = 1) 
 {
     # Check if data is zero indexed
     check_zero(Links[, Source], Links[, Target])
@@ -187,11 +198,14 @@ sankeyNetwork <- function(Links, Nodes, Source, Target, Value,
     options = list(NodeID = NodeID, NodeGroup = NodeGroup, LinkGroup = LinkGroup, 
         colourScale = colourScale, fontSize = fontSize, fontFamily = fontFamily, 
         nodeWidth = nodeWidth, nodePadding = nodePadding, nodeStrokeWidth = nodeStrokeWidth,
+        nodeCornerRadius = nodeCornerRadius,
         numberFormat = numberFormat, orderByPath = orderByPath,
         units = units, margin = margin, iterations = iterations, 
         zoom = zoom, linkType = linkType, curvature = curvature,
-        highlightChildLinks = highlightChildLinks,
-        align = align, scaleNodeBreadthsByString = scaleNodeBreadthsByString)
+        highlightChildLinks = highlightChildLinks, doubleclickTogglesChildren = doubleclickTogglesChildren,
+        showNodeValues = showNodeValues, align = align, xAxisDomain = xAxisDomain,
+        title = title,
+        scaleNodeBreadthsByString = scaleNodeBreadthsByString, xScalingFactor = xScalingFactor)
     
     # create widget
     htmlwidgets::createWidget(name = "sankeyNetwork", x = list(links = LinksDF, 
