@@ -13,6 +13,8 @@ d3.sankey = function() {
       orderByPath = false,
       scaleNodeBreadthsByString = false,
       curvature = .5,
+      showNodeValues = false,
+      nodeCornerRadius = 0,
       nodes = [],
       links = [];
 
@@ -39,16 +41,22 @@ d3.sankey = function() {
     links = _;
     return sankey;
   };
-  
+
   sankey.orderByPath = function(_) {
     if (!arguments.length) return orderByPath;
     orderByPath = _;
     return sankey;
   };
-  
+
   sankey.curvature = function(_) {
     if (!arguments.length) return curvature;
     curvature = _;
+    return sankey;
+  };
+  
+  sankey.showNodeValues = function(_) {
+    if (!arguments.length) return showNodeValues;
+    showNodeValues = _;
     return sankey;
   };
 
@@ -70,6 +78,12 @@ d3.sankey = function() {
     return sankey;
   };
   
+  sankey.nodeCornerRadius= function(_) {
+    if (!arguments.length) return nodeCornerRadius;
+    nodeCornerRadius = _;
+    return sankey;
+  };
+
   sankey.scaleNodeBreadthsByString = function(_) {
     if (!arguments.length) return scaleNodeBreadthsByString;
     scaleNodeBreadthsByString = _;
@@ -82,7 +96,6 @@ d3.sankey = function() {
     computeNodeValues();
     computeNodeBreadths();
     computeNodeDepths(iterations);
-    computeLinkDepths();
     return sankey;
   };
 
@@ -93,57 +106,93 @@ d3.sankey = function() {
 
   // SVG path data generator, to be used as "d" attribute on "path" element selection.
   sankey.link = function() {
+    function xy(x,y) { return x + "," + y; }
+    
+    // M(x,y) moveto function - moves pen to new location; doesn't draw
+    function M(x,y)  { return "M" + xy(x,y); }
+    
+    // C(x1,y1,x2,y2,x,y) curveto function 
+    //   draws a cubic bezier curve from the current point to (x,y)
+    //   using (x1,y1) and (x2,y2) as control points
+    function C(x1,y1,x2,y2,x,y)  { return "C" + xy(x1,y1) + " " + xy(x2,y2) + " " + xy(x,y); }
+    
+    // S(x2,y2,x,y) smooth curveto function 
+    //   draws a cubic bezier curve from the current point to (x,y)
+    //   with the first control point being a reflection of (x2,y2)
+    function C(x1,y1,x2,y2,x,y)  { return "C" + xy(x1,y1) + " " + xy(x2,y2) + " " + xy(x,y); }
+    
+    // L(x,y) lineto function - moves pen to new location; doesn't draw
+    function L(x,y)  { return "L" + xy(x,y); }
+    
+    // Z() closepath function - line is drawn from last point to first
+    function Z()  { return "Z"; }
+    
+    // V(y) vertical lineto function - draw a horizontal line from the current point to y
+    function V(y)  { return "V" + y; }
+    
+    // v(dy) vertical lineto function - draws a horizontal line from the current point for dy px
+    function v(dy)  { return "v" + dy; }
+    
+    // H(y) horizontal lineto function - draw a horizontal line from the current point to x
+    function H(x)  { return "H" + x; }
+    
+    
     function link(d) {
-      var x0 = d.source.x + d.source.dx,
-          x1 = d.target.x,
+      
+      var x0 = d.source.x + d.source.dx - nodeCornerRadius,  // x source point
+          x1 = d.target.x  + nodeCornerRadius,               // x target point
           xi = d3.interpolateNumber(x0, x1),
           x2 = xi(curvature),
-          x3 = xi(1 - curvature),
-          y0 = d.source.y + d.sy + d.dy / 2,
-          y1 = d.target.y + d.ty + d.dy / 2;
-          
-      if (!d.cycleBreaker) {
-        if (linkType == "bezier") {
-          return "M" + x0 + "," + y0
-           + "C" + x2 + "," + y0
-           + " " + x3 + "," + y1
-           + " " + x1 + "," + y1;
-          
-        } else if (linkType == "l-bezier") {
-          // from @michealgasser pull request #120 to d3/d3-plugins
-        x4 = x0 + d.source.dx/4
-        x5 = x1 - d.target.dx/4
-        x2 = Math.max(xi(curvature), x4+d.dy)
-        x3 = Math.min(xi(curvature), x5-d.dy)
-      return "M" + x0 + "," + y0
-           + "L" + x4 + "," + y0
-		       + "C" + x2 + "," + y0
-		       + " " + x3 + "," + y1
-		       + " " + x5 + "," + y1
-           + "L" + x1 + "," + y1;
-        } else if (linkType == "trapez") {
-          // TRAPEZOID connection
-          return "M" + (x0) + "," + (y0 - d.dy/2)
-               + "L" + (x0) + "," + (y0 + d.dy/2)
-               + " " + (x1) + "," + (y1 + d.dy/2)
-               + " " + (x1) + "," + (y1 - d.dy/2) + " z";
-        }
+          x3 = xi(1 - curvature);
 
-      } else {
+
+      var y0 = d.source.y + d.sy,
+          y1 = d.target.y + d.ty,
+          y2 = y1 + d.dy,
+          y3 = y0 + d.dy;
+
+      var ld;
+      if (d.cycleBreaker) {
+        // TODO: Fix notation (xs = x0, etc)
         var xdelta = (1.5 * d.dy + 0.05 * Math.abs(xs - xt));
         xsc = xs + xdelta;
         xtc = xt - xdelta;
         var xm = xi(0.5);
         var ym = d3.interpolateNumber(ys, yt)(0.5);
         var ydelta = (2 * d.dy + 0.1 * Math.abs(xs - xt) + 0.1 * Math.abs(ys - yt)) * (ym < (size[1] / 2) ? -1 : 1);
-        return "M" + xs + "," + ys
-             + "C" + xsc + "," + ys
-             + " " + xsc + "," + (ys + ydelta)
-             + " " + xm + "," + (ym + ydelta)
-             + "S" + xtc + "," + yt
-             + " " + xt + "," + yt;
-
+        
+        ld = M(xs,ys) + C(xsc,ys, xsc,(ys + ydelta), xm,(ym + ydelta)) + S(xtc,yt, xt,yt);
+      } else {
+        switch (linkType) {
+          case "trapez":
+            ld = M(x0,y0) + L(x0,y3) + L(x1,y2) + L(x1,y1) + Z(); 
+            break;
+          case "path1":    // from @ghedamat https://github.com/d3/d3-plugins/pull/36 
+            ld = M(x0,y0) + C(x2,y0, x3,y1, x1,y1) + L(x1,y2) + C(x3,y2, x2,y3, x0,y3) + Z(); 
+            break;
+          case "path2":   // from @cmorse https://github.com/d3/d3-plugins/pull/40 
+            var x4 = x3 + ((d.dy < 15) ? ((d.source.y < d.target.y) ? -1 * d.dy : d.dy) : 0),
+                x5 = x2 + ((d.dy < 15) ? ((d.source.y < d.target.y) ? -1 * d.dy : d.dy) : 0);
+            ld = M(x0,y0) + C(x2,y0, x3,y1, x1,y1) + v(d.dy) + C(x4,y2, x5,y3, x0,y3) + Z();
+            break;
+          case "l-bezier": // from @michealgasser pull request #120 to d3/d3-plugins
+            y0 = d.source.y + d.sy + d.dy / 2;
+            y1 = d.target.y + d.ty + d.dy / 2;
+            x4 = x0 + d.source.dx/4
+            x5 = x1 - d.target.dx/4
+            x2 = Math.max(xi(curvature), x4+d.dy)
+            x3 = Math.min(xi(curvature), x5-d.dy)
+            ld = M(x0,y0) + H(x4) + C(x2,y0, x3,y1, x5,y1) + H(x1);
+            break;
+          case "bezier":
+          default:
+            y0 = d.source.y + d.sy + d.dy / 2;
+            y1 = d.target.y + d.ty + d.dy / 2;
+            ld = M(x0,y0) + C(x2,y0, x3,y1, x1,y1);
+            break;
+        }
       }
+      return ld;
     }
 
     link.curvature = function(_) {
@@ -163,10 +212,12 @@ d3.sankey = function() {
       node.sourceLinks = [];
       // Links that have this node as target.
       node.targetLinks = [];
+      node.inactive = false;
     });
     links.forEach(function(link) {
       var source = link.source,
           target = link.target;
+      link.inactive = false;
       if (typeof source === "number") source = link.source = nodes[link.source];
       if (typeof target === "number") target = link.target = nodes[link.target];
       source.sourceLinks.push(link);
@@ -234,13 +285,13 @@ d3.sankey = function() {
             node.dx = nodeWidth;
         });
     }
-    
+
     // calculate maximum string lengths at each posX
     max_posX= d3.max(nodes, function(d) { return(d.posX); } ) + 1;
     var max_str_length = new Array(max_posX);
     nodes.forEach(function(node) {
         if (typeof max_str_length[node.x] == "undefined" || node.name.length > max_str_length[node.x]) {
-            max_str_length[node.x] = node.name.length;
+          max_str_length[node.x] = node.name.length;
         }
 
         // make a path to the beginning for vertical ordering
@@ -269,13 +320,14 @@ d3.sankey = function() {
         node.x += x - 1;
       });
     }
+    
 
     if (align === 'center') {
       moveSourcesRight();
-    }
-    if (align === 'justify') {
+    } else if (align === 'justify') {
       moveSinksRight(max_posX);
     }
+    
     if (align == 'none') {
       scaleNodeBreadths((size[0] - nodeWidth) / (max_posX));
     } else {
@@ -349,7 +401,7 @@ d3.sankey = function() {
       if (!node.sourceLinks.length) {
         node.x = x - 1;
       } else {
-        //move node to second from right 
+        //move node to second from right
         var nodes_to_right = 0;
         node.sourceLinks.forEach(function(n) {
           nodes_to_right = Math.max(nodes_to_right,n.target.sourceLinks.length)
@@ -362,6 +414,9 @@ d3.sankey = function() {
   function scaleNodeBreadths(kx) {
     nodes.forEach(function(node) {
       if (scaleNodeBreadthsByString) {
+        // this scaling is suboptimal - ideally it will be moved out to sankeyNetwork.js and 
+        // calculated based on measured string lengths using el.getComputedTextLength() or 
+        
         node.x = summed_str_length[node.x];
       } else {
         node.x *= kx;
@@ -374,13 +429,13 @@ d3.sankey = function() {
 
     var more_nodes = nodes;
     var nodesByBreadth;
-    
+
     if (orderByPath) {
       nodesByBreadth = new Array(max_posX);
       for (i=0; i < nodesByBreadth.length; ++i) {
           nodesByBreadth[i] = [];
       }
-      
+
       // Add 'invisible' nodes to account for different depths
       for (posX=0; posX < max_posX; ++posX) {
           for (j=0; j < nodes.length; ++j) {
@@ -389,8 +444,12 @@ d3.sankey = function() {
               }
               node = nodes[j];
               nodesByBreadth[posX].push(node);
-              if (node.sourceLinks.length && node.sourceLinks[0].target.posX > node.posX +1) {
-                  for (new_node_posX=node.posX+1; new_node_posX < node.sourceLinks[0].target.posX; ++new_node_posX) {
+              no_intermediary_nodes = node.sourceLinks.length && node.sourceLinks[0].target.posX > node.posX +1;
+              no_end_nodes = !node.sourceLinks.length && node.posX < max_posX
+
+              if (no_intermediary_nodes || no_end_nodes) {
+                end_node = no_intermediary_nodes? node.sourceLinks[0].target.posX : max_posX
+                  for (new_node_posX=node.posX+1; new_node_posX < end_node; ++new_node_posX) {
                       var new_node = node.constructor();
                       new_node.posX = new_node_posX;
                       new_node.dy = node.dy;
@@ -413,20 +472,23 @@ d3.sankey = function() {
 
     }
 
-    // Group nodes by breath.
-    //var nodesByBreadth = d3.nest()
-    //    .key(function(d) { return d.x; })
-    //    .sortKeys(d3.ascending)
-    //    .entries(nodes)
-    //    .map(function(d) { return d.values; });
+    //console.log(nodesByBreadth)
 
     initializeNodeDepth();
     resolveCollisions();
+    computeLinkDepths();
+
     for (var alpha = 1; iterations > 0; --iterations) {
       relaxRightToLeft(alpha *= .99);
       resolveCollisions();
+      computeLinkDepths();
       relaxLeftToRight(alpha);
       resolveCollisions();
+      computeLinkDepths();
+    }
+    
+    if (orderByPath) {
+      
     }
 
     function initializeNodeDepth() {
@@ -453,6 +515,12 @@ d3.sankey = function() {
           if (node.targetLinks.length) {
             // Value-weighted average of the y-position of source node centers linked to this node.
             var y = d3.sum(node.targetLinks, weightedSource) / d3.sum(node.targetLinks, value);
+
+            //console.log([y, node.targetLinks[0].source.y, node.targetLinks[0].sy, node.targetLinks[0] ]);
+            //var y = node.targetLinks[0].source.y;
+            //if (typeof node.targetLinks[0].sy != "undefined") {
+            //  y = y + node.targetLinks[0].sy;
+            //}
             node.y += (y - center(node)) * alpha;
           }
         });

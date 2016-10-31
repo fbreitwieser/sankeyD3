@@ -13,18 +13,31 @@ shinyServer(function(input, output) {
     Energy$links$target_name <- Energy$nodes[Energy$links$target+1, "name"]
     sankeyNetwork(Links = Energy$links, Nodes = Energy$nodes, Source = "source",
                   Target = "target", Value = "value", NodeID = "name",
-                  fontSize = 12, nodeWidth = 30, 
+                  fontSize = 12, 
                   zoom = input$zoom, align = input$align,
                   scaleNodeBreadthsByString = input$scaleNodeBreadthsByString,
+                  nodeWidth = input$nodeWidth,
                   nodeStrokeWidth = input$nodeStrokeWidth,
                   LinkGroup = ifelse(input$LinkGroup == "none", NA, input$LinkGroup),
                   NodeGroup = ifelse(input$NodeGroup == "none", NA, input$NodeGroup),
+                  nodePadding = input$nodePadding,
+                  nodeCornerRadius = input$nodeCornerRadius,
+                  showNodeValues = input$showNodeValues,
                   linkType = input$linkType,
                   curvature = input$curvature,
                   numberFormat = input$numberFormat,
                   highlightChildLinks = input$highlightChildLinks,
+                  doubleclickTogglesChildren = input$doubleclickTogglesChildren,
                   orderByPath = input$orderByPath,
+                  xScalingFactor = input$xScalingFactor,
                   units = "kWh")
+  })
+  
+  output$clicked_node <- renderPrint( {
+    input$sankey_clicked 
+    })
+  output$hovered_node <- renderPrint( {
+    input$sankey_hover
   })
   
 })

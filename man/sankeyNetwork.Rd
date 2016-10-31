@@ -12,10 +12,13 @@ sankeyNetwork(Links, Nodes, Source, Target, Value, NodeID, NodeGroup = NodeID,
   LinkGroup = NULL, NodePosX = NULL, NodeValue = NULL, units = "",
   colourScale = JS("d3.scaleOrdinal().range(d3.schemeCategory20)"),
   fontSize = 7, fontFamily = NULL, nodeWidth = 15, nodePadding = 10,
-  nodeStrokeWidth = 1, margin = NULL, numberFormat = ",.5g",
-  orderByPath = FALSE, highlightChildLinks = FALSE, height = NULL,
-  width = NULL, iterations = 32, zoom = FALSE, align = "justify",
-  linkType = "bezier", curvature = 0.5, scaleNodeBreadthsByString = FALSE)
+  nodeStrokeWidth = 1, nodeCornerRadius = 0, margin = NULL,
+  title = NULL, numberFormat = ",.5g", orderByPath = FALSE,
+  highlightChildLinks = FALSE, doubleclickTogglesChildren = FALSE,
+  xAxisDomain = NULL, height = NULL, width = NULL, iterations = 32,
+  zoom = FALSE, align = "justify", showNodeValues = TRUE,
+  linkType = "bezier", curvature = 0.5, scaleNodeBreadthsByString = FALSE,
+  xScalingFactor = 1)
 }
 \arguments{
 \item{Links}{a data frame object with the links between the nodes. It should
@@ -70,6 +73,8 @@ scale for the nodes. See
 
 \item{nodeStrokeWidth}{numeric width of the stroke around nodes.}
 
+\item{nodeCornerRadius}{numberic Radius for rounded nodes.}
+
 \item{margin}{an integer or a named \code{list}/\code{vector} of integers
 for the plot margins. If using a named \code{list}/\code{vector},
 the positions \code{top}, \code{right}, \code{bottom}, \code{left}
@@ -77,13 +82,21 @@ are valid.  If a single integer is provided, then the value will be
 assigned to the right margin. Set the margin appropriately
 to accomodate long text labels.}
 
-\item{numberFormat}{number format in toolstips - see https://github.com/d3/d3-format for options}
+\item{title}{character Title of plot, put in the upper-left corner of the Sankey}
 
-\item{orderByPath}{Order the nodes vertically along a path - this layout only
+\item{numberFormat}{number format in toolstips - see https://github.com/d3/d3-format for options.}
+
+\item{orderByPath}{boolean Order the nodes vertically along a path - this layout only
 works well for trees where each node has maximum one parent.}
 
-\item{highlightChildLinks}{Highlight all the links going right from a node or 
+\item{highlightChildLinks}{boolean Highlight all the links going right from a node or 
 link.}
+
+\item{doubleclickTogglesChildren}{boolean Show/hide target nodes and paths to the left
+on double-click. Does not hide incoming links of target nodes, yet.}
+
+\item{xAxisDomain}{character[] If xAxisDomain is given, an axis with those value is 
+added to the bottom of the plot. Only sensible when also NodeXPos are given.}
 
 \item{height}{numeric height for the network graph's frame area in pixels.}
 
@@ -99,12 +112,16 @@ zooming}
 \item{align}{character Alignment of the nodes. One of 'right', 'left', 'justify', 'center', 'none'.
 If 'none', then the labels of the nodes are always to the right of the node.}
 
-\item{linkType}{character One of 'bezier', 'l-bezier', and trapezoid.}
+\item{showNodeValues}{boolean Show values above nodes. Might require and increased node margin.}
+
+\item{linkType}{character One of 'bezier', 'l-bezier', 'trapezoid', 'path1' and 'path2'.}
 
 \item{curvature}{numeric Curvature parameter for bezier links - between 0 and 1.}
 
 \item{scaleNodeBreadthsByString}{Put nodes at positions relatively to string lengths - 
 only work well currently with align='none'}
+
+\item{xScalingFactor}{numeric Scale the computed x position of the nodes by this value.}
 }
 \description{
 Create a D3 JavaScript Sankey diagram
