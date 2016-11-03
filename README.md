@@ -2,7 +2,7 @@
 
 Version 0.2
 
-This project is based on the Sankey implementation in [networkD3](https://github.com/christophergandrud/networkD3) and [d3-sankey](https://github.com/d3/d3-sankey).  
+This project is based on [networkD3](https://github.com/christophergandrud/networkD3) and [d3-sankey](https://github.com/d3/d3-sankey).  
 
 Changelog:
  - Based on D3 v4 / https://github.com/d3/d3-sankey 
