@@ -1,4 +1,4 @@
-# D3 JavaScript Sankey Network Graphs from R
+# Sankey Network Graphs from R
 
 Version 0.2
 
