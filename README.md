@@ -1,9 +1,48 @@
 # Sankey Network Graphs from R
 
-Version 0.2 [![Build Status](https://travis-ci.org/fbreitwieser/sankeyD3.svg?branch=master)](https://travis-ci.org/fbreitwieser/sankeyD3)
+sankeyD3 v0.2 [![Build Status](https://travis-ci.org/fbreitwieser/sankeyD3.svg?branch=master)](https://travis-ci.org/fbreitwieser/sankeyD3). 
+Based on [networkD3](https://github.com/christophergandrud/networkD3) and [d3-sankey](https://github.com/d3/d3-sankey).  
 
-This project is based on [networkD3](https://github.com/christophergandrud/networkD3) and [d3-sankey](https://github.com/d3/d3-sankey).  
+![image](https://cloud.githubusercontent.com/assets/516060/19978179/631e15e0-a1cc-11e6-8125-3f342c4f3b92.png)
 
+ 
+## Installation and Usage
+
+```R
+# Installation
+# install.packages('devtools')
+devtools::install_github("fbreitwieser/sankeyD3")
+
+# Run example site directly from Github
+shiny::runGitHub("fbreitwieser/sankeyD3", subdir="inst/examples/shiny")
+
+## Run it locally
+library(sankeyD3)
+# Based on http://bost.ocks.org/mike/sankey/
+# Load energy projection data
+URL <- paste0("https://cdn.rawgit.com/christophergandrud/networkD3/",
+              "master/JSONdata/energy.json")
+Energy <- jsonlite::fromJSON(URL)
+
+# Plot
+sankeyNetwork(Links = Energy$links, Nodes = Energy$nodes, Source = "source",
+             Target = "target", Value = "value", NodeID = "name",
+             units = "TWh", fontSize = 12, nodeWidth = 30)
+```
+
+### Saving to an external file
+
+Use `saveNetwork` to save a network to stand alone HTML file:
+
+```R
+library(magrittr)
+
+sankeyNetwork(Links = Energy$links, Nodes = Energy$nodes, Source = "source",
+             Target = "target", Value = "value", NodeID = "name",
+             units = "TWh", fontSize = 12, nodeWidth = 30) %>% saveNetwork(file = 'Net1.html')
+```
+
+## Features
  - Uses D3 v4
      - adds several modifications from networkD3 sankey.js 
      - includes fixes and features from unmerged pull requests:
@@ -26,34 +65,3 @@ This project is based on [networkD3](https://github.com/christophergandrud/netwo
     nodes
  - Adds option xScalingFactor to scale width between nodes
  - Adds option xAxisDomain to make an x-axis
-
-
-
-
-The `inst/examples/shiny` web-app exposes several of the features:
-![image](https://cloud.githubusercontent.com/assets/516060/19533346/5af9a822-960d-11e6-984c-333d20f2451f.png)
- 
-## Usage
-
-```R
-# Recreate Bostock Sankey diagram: http://bost.ocks.org/mike/sankey/
-# Load energy projection data
-URL <- paste0("https://cdn.rawgit.com/christophergandrud/networkD3/",
-              "master/JSONdata/energy.json")
-Energy <- jsonlite::fromJSON(URL)
-
-# Plot
-sankeyNetwork(Links = Energy$links, Nodes = Energy$nodes, Source = "source",
-             Target = "target", Value = "value", NodeID = "name",
-             units = "TWh", fontSize = 12, nodeWidth = 30)
-```
-
-### Saving to an external file
-
-Use `saveNetwork` to save a network to stand alone HTML file:
-
-```R
-library(magrittr)
-
-simpleNetwork(networkData) %>% saveNetwork(file = 'Net1.html')
-```
