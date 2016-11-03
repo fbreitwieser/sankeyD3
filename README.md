@@ -1,6 +1,6 @@
 # Sankey Network Graphs from R
 
-Version 0.2
+Version 0.2 [![Build Status](https://travis-ci.org/fbreitwieser/sankeyD3.svg?branch=master)](https://travis-ci.org/fbreitwieser/sankeyD3)
 
 This project is based on [networkD3](https://github.com/christophergandrud/networkD3) and [d3-sankey](https://github.com/d3/d3-sankey).  
 
