@@ -1,4 +1,4 @@
-# Sankey Network Graphs from R
+# sankeyD3 - Sankey Network Graphs in R and Shiny
 
 sankeyD3 v0.2 [![Build Status](https://travis-ci.org/fbreitwieser/sankeyD3.svg?branch=master)](https://travis-ci.org/fbreitwieser/sankeyD3). 
 Based on [networkD3](https://github.com/christophergandrud/networkD3) and [d3-sankey](https://github.com/d3/d3-sankey).  
