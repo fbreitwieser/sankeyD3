@@ -1,3 +1,14 @@
+sankeyD3 v0.3 (Release date: 2016-11-17)
+==========
+
+Changes:
+ - Added option linkGradient to make link a gradient (when LinkGroup is not defined)
+ - Added option linkColor to specify link color
+ - Added option linkOpacity to specify opacity of link
+ - Added option nodeShadow to add drop shadow
+ - Added option nodeLabelMargin to specify the distance between label and node
+
+
 sankeyD3 v0.2 (Release date: 2016-10-30)
 ==========
 

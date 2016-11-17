@@ -74,15 +74,17 @@ HTMLWidgets.widget({
           if (d.group){
             return color(d.group);
           } else {
-            return "#cccccc";
+            return options.linkColor;
           }
         }
 
         var color_link = function color_link(d) {
           if (d.group){
             return color(d.group);
+          } else if (options.linkGradient) {
+            return "url(#linearLinkGradient)";
           } else {
-            return  "#000000";
+            return  "#CCCCCC";
           }
         }
 
@@ -95,9 +97,9 @@ HTMLWidgets.widget({
             return 0;
           }
           if (d.group){
-            return 0.5;
+            return options.linkOpacity;
           } else {
-            return 0.2;
+            return options.linkOpacity;
           }
         }
 
@@ -178,7 +180,69 @@ HTMLWidgets.widget({
         svg = svg
                 .append("g").attr("class","zoom-layer")
                 .append("g").attr("transform", "translate(" + margin.left + "," + margin.top + ")");;
-                
+
+        //make defs and add the linear gradient
+        // filters go in defs element
+        var defs = svg.append("defs");
+
+        if (options.linkGradient) {
+          var lg = defs.append("linearGradient")
+          .attr("id", "linearLinkGradient")
+          .attr("x1", "0%")
+          .attr("x2", "100%") // horizontal gradient
+          .attr("y1", "0%")
+          .attr("y2", "0%");
+
+          lg.append("stop")
+          .attr("offset", "0%")
+          .style("stop-color", "#A0A0A0")//end in light gray
+          .style("stop-opacity", 1)
+        
+          lg.append("stop")
+          .attr("offset", "100%")
+          .style("stop-color", "#D0D0D0")//start in dark gray
+          .style("stop-opacity", 1)
+        }
+        
+       
+        if (options.nodeShadow) {
+          // drop shadow definitions from http://bl.ocks.org/cpbotha/5200394
+          // create filter with id #drop-shadow
+          // height=130% so that the shadow is not clipped
+          var filter = defs.append("filter")
+              .attr("id", "drop-shadow")
+              .attr("height", "130%")
+              .attr("width", "130%");
+ 
+          // SourceAlpha refers to opacity of graphic that this filter will be applied to
+          // convolve that with a Gaussian with standard deviation 3 and store result
+          // in blur
+          filter.append("feGaussianBlur")
+              .attr("in", "SourceAlpha")
+              .attr("stdDeviation", .5)
+              .attr("result", "blur");
+          
+          // translate output of Gaussian blur to the right and downwards with 2px
+          // store result in offsetBlur
+          filter.append("feOffset")
+              .attr("in", "blur")
+              .attr("dx", .5)
+              .attr("dy", .5)
+              .attr("rx", options.nodeCornerRadius)
+              .attr("ry", options.nodeCornerRadius)
+              .attr("result", "offsetBlur");
+          
+          // overlay original SourceGraphic over translated blurred opacity by using
+          // feMerge filter. Order of specifying inputs is important!
+          var feMerge = filter.append("feMerge");
+          
+          feMerge.append("feMergeNode")
+              .attr("in", "offsetBlur")
+          feMerge.append("feMergeNode")
+              .attr("in", "SourceGraphic");
+        }
+        
+               
         // add zooming if requested
         if (options.zoom) {
           zoom.on("zoom", redraw)
@@ -226,6 +290,7 @@ HTMLWidgets.widget({
         function min1_or_dy(d) {
           return Math.max(1, d.dy);
         }
+
 
         if (options.linkType == "bezier" || options.linkType == "l-bezier") {
           link.attr("d", draw_link)
@@ -422,6 +487,8 @@ HTMLWidgets.widget({
             .style("cursor", "move")
             .attr("rx", options.nodeCornerRadius)
             .attr("ry", options.nodeCornerRadius)
+			.style("filter", function(d) {
+                if (options.nodeShadow) { return( "url(#drop-shadow)");  } } )
             .append("title")
             .attr("class", "tooltip")
             .attr("title", function(d) { return format(d.value); })
@@ -431,7 +498,7 @@ HTMLWidgets.widget({
 
         node
             .append("text")
-            .attr("x", - 2)
+            .attr("x", - options.nodeLabelMargin)
             .attr("y", function(d) { return d.dy / 2; })
             .attr("class", "node-text")
             .attr("dy", ".35em")
@@ -442,7 +509,7 @@ HTMLWidgets.widget({
             .style("font-size", options.fontSize + "px")
             .style("font-family", options.fontFamily ? options.fontFamily : "inherit")
             .filter(function(d) { return d.x < width / 2 || (options.align == "none"); })
-            .attr("x", 2 + sankey.nodeWidth())
+            .attr("x", options.nodeLabelMargin + sankey.nodeWidth())
             .attr("text-anchor", "start");
             
         if (options.showNodeValues) {
@@ -450,7 +517,7 @@ HTMLWidgets.widget({
             .append("text")
             .attr("x", sankey.nodeWidth()/2)
             .attr("text-anchor", "middle")
-            .attr("dy", "-.1em")
+            .attr("dy", "-" + (options.nodeStrokeWidth + .1 ) + "em")
             .attr("transform", null)
             .attr("class", "node-number")
             .text(function(d) { return format(d.value); })

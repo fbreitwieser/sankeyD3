@@ -83,6 +83,11 @@ NULL
 #' If 'none', then the labels of the nodes are always to the right of the node.
 #' @param zoom logical value to enable (\code{TRUE}) or disable (\code{FALSE})
 #' zooming
+#' @param nodeLabelMargin numeric margin between node and label.
+#' @param linkColor numeric Color of links.
+#' @param linkOpacity numeric Opacity of links.
+#' @param linkGradient boolean Add a gradient to the links?
+#' @param nodeShadow boolean Add a shadow to the nodes?
 #' @param xScalingFactor numeric Scale the computed x position of the nodes by this value.
 #' @param xAxisDomain character[] If xAxisDomain is given, an axis with those value is 
 #' added to the bottom of the plot. Only sensible when also NodeXPos are given.
@@ -135,7 +140,8 @@ sankeyNetwork <- function(Links, Nodes, Source, Target, Value,
     numberFormat = ",.5g", orderByPath = FALSE, highlightChildLinks  = FALSE,
     doubleclickTogglesChildren = FALSE, xAxisDomain = NULL,
     height = NULL, width = NULL, iterations = 32, zoom = FALSE, align = "justify",
-    showNodeValues = TRUE, linkType = "bezier", curvature = .5, 
+    showNodeValues = TRUE, linkType = "bezier", curvature = .5,  linkColor = "#A0A0A0",
+    nodeLabelMargin = 2, linkOpacity = .5, linkGradient = FALSE, nodeShadow = FALSE, 
     scaleNodeBreadthsByString = FALSE, xScalingFactor = 1) 
 {
     # Check if data is zero indexed
@@ -204,7 +210,8 @@ sankeyNetwork <- function(Links, Nodes, Source, Target, Value,
         zoom = zoom, linkType = linkType, curvature = curvature,
         highlightChildLinks = highlightChildLinks, doubleclickTogglesChildren = doubleclickTogglesChildren,
         showNodeValues = showNodeValues, align = align, xAxisDomain = xAxisDomain,
-        title = title,
+        title = title, nodeLabelMargin = nodeLabelMargin, 
+        linkColor = linkColor, linkOpacity = linkOpacity, linkGradient = linkGradient, nodeShadow = nodeShadow,
         scaleNodeBreadthsByString = scaleNodeBreadthsByString, xScalingFactor = xScalingFactor)
     
     # create widget

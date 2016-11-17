@@ -27,6 +27,11 @@ Changelog:
     nodes
  - Added option xScalingFactor to scale width between nodes
  - Added option xAxisDomain to make an x-axis
+ - Added option linkGradient to make link a gradient (when LinkGroup is not defined)
+ - Added option linkColor to specify link color
+ - Added option linkOpacity to specify opacity of link
+ - Added option nodeShadow to add drop shadow
+ - Added option nodeLabelMargin to specify the distance between label and node
 
 
 

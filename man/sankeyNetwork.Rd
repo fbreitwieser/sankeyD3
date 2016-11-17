@@ -17,7 +17,9 @@ sankeyNetwork(Links, Nodes, Source, Target, Value, NodeID, NodeGroup = NodeID,
   highlightChildLinks = FALSE, doubleclickTogglesChildren = FALSE,
   xAxisDomain = NULL, height = NULL, width = NULL, iterations = 32,
   zoom = FALSE, align = "justify", showNodeValues = TRUE,
-  linkType = "bezier", curvature = 0.5, scaleNodeBreadthsByString = FALSE,
+  linkType = "bezier", curvature = 0.5, linkColor = "#A0A0A0",
+  nodeLabelMargin = 2, linkOpacity = 0.5, linkGradient = FALSE,
+  nodeShadow = FALSE, scaleNodeBreadthsByString = FALSE,
   xScalingFactor = 1)
 }
 \arguments{
@@ -117,6 +119,16 @@ If 'none', then the labels of the nodes are always to the right of the node.}
 \item{linkType}{character One of 'bezier', 'l-bezier', 'trapezoid', 'path1' and 'path2'.}
 
 \item{curvature}{numeric Curvature parameter for bezier links - between 0 and 1.}
+
+\item{linkColor}{numeric Color of links.}
+
+\item{nodeLabelMargin}{numeric margin between node and label.}
+
+\item{linkOpacity}{numeric Opacity of links.}
+
+\item{linkGradient}{boolean Add a gradient to the links?}
+
+\item{nodeShadow}{boolean Add a shadow to the nodes?}
 
 \item{scaleNodeBreadthsByString}{Put nodes at positions relatively to string lengths - 
 only work well currently with align='none'}
