@@ -25,6 +25,7 @@ Imports:
     htmlwidgets (>= 0.3.2),
     magrittr
 Suggests:
+    shiny,
     htmltools (>= 0.2.6),
     igraph,
     jsonlite
