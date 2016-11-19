@@ -36,6 +36,8 @@ shinyUI(fluidPage(
     checkboxInput("showNodeValues", "showNodeValues", value = FALSE),
     checkboxInput("linkGradient", "linkGradient", value = FALSE),
     checkboxInput("nodeShadow", "nodeShadow", value = FALSE),
+    checkboxInput("dragX", "dragX", value = FALSE),
+    checkboxInput("dragY", "dragY", value = FALSE),
     sliderInput("nodeWidth","nodeWidth", value = 30, min = 0, max = 50),
     sliderInput("nodeStrokeWidth","nodeStrokeWidth", value = 1, min = 0, max = 15),
     sliderInput("nodePadding","nodePadding", value = 10, min = 0, max=50, step = 1),

@@ -15,12 +15,12 @@ sankeyNetwork(Links, Nodes, Source, Target, Value, NodeID, NodeGroup = NodeID,
   nodeStrokeWidth = 1, nodeCornerRadius = 0, margin = NULL,
   title = NULL, numberFormat = ",.5g", orderByPath = FALSE,
   highlightChildLinks = FALSE, doubleclickTogglesChildren = FALSE,
-  xAxisDomain = NULL, height = NULL, width = NULL, iterations = 32,
-  zoom = FALSE, align = "justify", showNodeValues = TRUE,
-  linkType = "bezier", curvature = 0.5, linkColor = "#A0A0A0",
-  nodeLabelMargin = 2, linkOpacity = 0.5, linkGradient = FALSE,
-  nodeShadow = FALSE, scaleNodeBreadthsByString = FALSE,
-  xScalingFactor = 1)
+  xAxisDomain = NULL, dragX = FALSE, dragY = FALSE, height = NULL,
+  width = NULL, iterations = 32, zoom = FALSE, align = "justify",
+  showNodeValues = TRUE, linkType = "bezier", curvature = 0.5,
+  linkColor = "#A0A0A0", nodeLabelMargin = 2, linkOpacity = 0.5,
+  linkGradient = FALSE, nodeShadow = FALSE,
+  scaleNodeBreadthsByString = FALSE, xScalingFactor = 1)
 }
 \arguments{
 \item{Links}{a data frame object with the links between the nodes. It should
@@ -99,6 +99,10 @@ on double-click. Does not hide incoming links of target nodes, yet.}
 
 \item{xAxisDomain}{character[] If xAxisDomain is given, an axis with those value is 
 added to the bottom of the plot. Only sensible when also NodeXPos are given.}
+
+\item{dragX}{boolean Allow moving nodes along the x-axis?}
+
+\item{dragY}{boolean Allow moving nodes along the y-axis?}
 
 \item{height}{numeric height for the network graph's frame area in pixels.}
 

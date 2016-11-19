@@ -27,6 +27,8 @@ shinyServer(function(input, output) {
                   nodePadding = input$nodePadding,
                   nodeCornerRadius = input$nodeCornerRadius,
                   showNodeValues = input$showNodeValues,
+                  dragX = input$dragX,
+                  dragY = input$dragY,
                   linkType = input$linkType,
                   curvature = input$curvature,
                   numberFormat = input$numberFormat,

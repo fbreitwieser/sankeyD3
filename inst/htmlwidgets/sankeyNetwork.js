@@ -66,7 +66,7 @@ HTMLWidgets.widget({
         var height = el.getBoundingClientRect().height - margin.top - margin.bottom;
 
         // set this up even if zoom = F
-        var zoom = d3.zoom();    
+        var zoom = d3.zoom().scaleExtent([.75, 3]);    
 
         var color = eval(options.colourScale);
         
@@ -160,15 +160,16 @@ HTMLWidgets.widget({
 
 
         function dragmove(d) {
+          if (options.dragX || options.dragY) {
             d3.select(this).attr("transform", 
                     "translate(" + 
-                      (d.x = Math.max(0, d3.event.x)) + "," +
-                       //d.x + "," +
-                      (d.y = Math.max(0, d3.event.y)) + ")");
+                      (options.dragX? (d.x = Math.max(0, d3.event.x)) : d.x ) + "," +
+                      (options.dragY? (d.y = Math.max(0, d3.event.y)) : d.y ) + ")");
             sankey.relayout();
             
             // update link path description
             link.attr("d", draw_link);
+          }
         }
 
         // select the svg element and remove existing children or previously set viewBox attribute
@@ -537,8 +538,6 @@ HTMLWidgets.widget({
           
           var axisXPos = new Array(options.xAxisDomain.length);
           sankey.nodes().forEach(function(node) { axisXPos[node.posX] = node.x + options.nodeWidth/2; });
-
-          console.log([options.xAxisDomain,axisXPos])
 
           var x = d3.scaleOrdinal().domain(options.xAxisDomain).range(axisXPos);
           svg.append("g").attr("class", "x axis")

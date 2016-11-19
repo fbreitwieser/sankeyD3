@@ -1,3 +1,11 @@
+Next version
+==========
+
+Changes:
+ - Added options dragX and dragY
+ - Limited zoom to 25% out and 300% in
+ 
+
 sankeyD3 v0.3 (Release date: 2016-11-17)
 ==========
 

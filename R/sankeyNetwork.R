@@ -87,6 +87,8 @@ NULL
 #' @param linkColor numeric Color of links.
 #' @param linkOpacity numeric Opacity of links.
 #' @param linkGradient boolean Add a gradient to the links?
+#' @param dragX boolean Allow moving nodes along the x-axis?
+#' @param dragY boolean Allow moving nodes along the y-axis?
 #' @param nodeShadow boolean Add a shadow to the nodes?
 #' @param xScalingFactor numeric Scale the computed x position of the nodes by this value.
 #' @param xAxisDomain character[] If xAxisDomain is given, an axis with those value is 
@@ -139,6 +141,7 @@ sankeyNetwork <- function(Links, Nodes, Source, Target, Value,
     margin = NULL, title = NULL,
     numberFormat = ",.5g", orderByPath = FALSE, highlightChildLinks  = FALSE,
     doubleclickTogglesChildren = FALSE, xAxisDomain = NULL,
+    dragX = FALSE, dragY = FALSE,
     height = NULL, width = NULL, iterations = 32, zoom = FALSE, align = "justify",
     showNodeValues = TRUE, linkType = "bezier", curvature = .5,  linkColor = "#A0A0A0",
     nodeLabelMargin = 2, linkOpacity = .5, linkGradient = FALSE, nodeShadow = FALSE, 
@@ -204,7 +207,7 @@ sankeyNetwork <- function(Links, Nodes, Source, Target, Value,
     options = list(NodeID = NodeID, NodeGroup = NodeGroup, LinkGroup = LinkGroup, 
         colourScale = colourScale, fontSize = fontSize, fontFamily = fontFamily, 
         nodeWidth = nodeWidth, nodePadding = nodePadding, nodeStrokeWidth = nodeStrokeWidth,
-        nodeCornerRadius = nodeCornerRadius,
+        nodeCornerRadius = nodeCornerRadius, dragX = dragX, dragY = dragY,
         numberFormat = numberFormat, orderByPath = orderByPath,
         units = units, margin = margin, iterations = iterations, 
         zoom = zoom, linkType = linkType, curvature = curvature,
