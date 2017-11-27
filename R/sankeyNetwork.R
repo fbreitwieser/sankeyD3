@@ -65,7 +65,7 @@ NULL
 #' @param nodeWidth numeric width of each node.
 #' @param nodePadding numeric essentially influences the width height.
 #' @param nodeStrokeWidth numeric width of the stroke around nodes.
-#' @param nodeCornerRadius numberic Radius for rounded nodes.
+#' @param nodeCornerRadius numeric Radius for rounded nodes.
 #' @param numberFormat number format in toolstips - see https://github.com/d3/d3-format for options.
 #' @param margin an integer or a named \code{list}/\code{vector} of integers
 #' for the plot margins. If using a named \code{list}/\code{vector},
