@@ -17,6 +17,13 @@ d3.sankey = function() {
       nodeCornerRadius = 0,
       nodes = [],
       links = [];
+      yOrderComparator = function ascendingDepth(a, b) {
+        if (orderByPath) {
+          return ( a.path < b.path ? -1 : (a.path > b.path ? 1 : 0 ));
+        } else {
+          return a.y - b.y;
+        }
+      }
 
   sankey.nodeWidth = function(_) {
     if (!arguments.length) return nodeWidth;
@@ -101,6 +108,12 @@ d3.sankey = function() {
 
   sankey.relayout = function() {
     computeLinkDepths();
+    return sankey;
+  };
+  
+   sankey.yOrderComparator = function(_) {
+    if (!arguments.length) return yOrderComparator;
+    yOrderComparator = _;
     return sankey;
   };
 
@@ -556,7 +569,7 @@ d3.sankey = function() {
             i;
 
         // Push any overlapping nodes down.
-        nodes.sort(ascendingDepth);
+        nodes.sort(yOrderComparator);
         for (i = 0; i < n; ++i) {
           node = nodes[i];
           dy = y0 - node.y;
@@ -578,14 +591,6 @@ d3.sankey = function() {
           }
         }
       });
-    }
-
-    function ascendingDepth(a, b) {
-      if (orderByPath) {
-        return ( a.path < b.path ? -1 : (a.path > b.path ? 1 : 0 ));
-      } else {
-        return a.y - b.y;
-      }
     }
   }
 

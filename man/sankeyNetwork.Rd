@@ -20,7 +20,8 @@ sankeyNetwork(Links, Nodes, Source, Target, Value, NodeID, NodeGroup = NodeID,
   showNodeValues = TRUE, linkType = "bezier", curvature = 0.5,
   linkColor = "#A0A0A0", nodeLabelMargin = 2, linkOpacity = 0.5,
   linkGradient = FALSE, nodeShadow = FALSE,
-  scaleNodeBreadthsByString = FALSE, xScalingFactor = 1)
+  scaleNodeBreadthsByString = FALSE, xScalingFactor = 1,
+  yOrderComparator = NULL)
 }
 \arguments{
 \item{Links}{a data frame object with the links between the nodes. It should
@@ -138,6 +139,8 @@ If 'none', then the labels of the nodes are always to the right of the node.}
 only work well currently with align='none'}
 
 \item{xScalingFactor}{numeric Scale the computed x position of the nodes by this value.}
+
+\item{yOrderComparator}{Javascript comparison function for custom vertical sort of nodes. Default is sort by ascending breadth. Use e.g. yOrderComparator = JS("function(a, b){return a.name < b.name ? -1 : a.name > b.name ? 1 : 0;}") to sort by name.}
 }
 \description{
 Create a D3 JavaScript Sankey diagram

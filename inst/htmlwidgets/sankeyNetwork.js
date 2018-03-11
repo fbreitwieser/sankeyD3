@@ -129,7 +129,7 @@ HTMLWidgets.widget({
           }
           return formated_num;
         }
-
+        
         // create d3 sankey layout
         sankey
             .nodes(d3.values(nodes))
@@ -143,9 +143,13 @@ HTMLWidgets.widget({
             .curvature(options.curvature)
             .orderByPath(options.orderByPath)
             .showNodeValues(options.showNodeValues)
-            .nodeCornerRadius(options.nodeCornerRadius)
-            .layout(options.iterations);
+            .nodeCornerRadius(options.nodeCornerRadius);
+            
+        if(options.yOrderComparator) {
+          sankey = sankey.yOrderComparator(eval(options.yOrderComparator));
+        }
 
+        sankey.layout(options.iterations);
 
         var max_posX = d3.max(sankey.nodes(), function(d) { return d.posX; });
         sankey.nodes().forEach(function(node) { node.x = node.x * options.xScalingFactor; });
