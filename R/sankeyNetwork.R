@@ -145,7 +145,8 @@ sankeyNetwork <- function(Links, Nodes, Source, Target, Value,
     height = NULL, width = NULL, iterations = 32, zoom = FALSE, align = "justify",
     showNodeValues = TRUE, linkType = "bezier", curvature = .5,  linkColor = "#A0A0A0",
     nodeLabelMargin = 2, linkOpacity = .5, linkGradient = FALSE, nodeShadow = FALSE, 
-    scaleNodeBreadthsByString = FALSE, xScalingFactor = 1) 
+    scaleNodeBreadthsByString = FALSE, xScalingFactor = 1,
+    yOrderComparator = NULL) 
 {
     # Check if data is zero indexed
     check_zero(Links[, Source], Links[, Target])
@@ -215,7 +216,8 @@ sankeyNetwork <- function(Links, Nodes, Source, Target, Value,
         showNodeValues = showNodeValues, align = align, xAxisDomain = xAxisDomain,
         title = title, nodeLabelMargin = nodeLabelMargin, 
         linkColor = linkColor, linkOpacity = linkOpacity, linkGradient = linkGradient, nodeShadow = nodeShadow,
-        scaleNodeBreadthsByString = scaleNodeBreadthsByString, xScalingFactor = xScalingFactor)
+        scaleNodeBreadthsByString = scaleNodeBreadthsByString, xScalingFactor = xScalingFactor,
+        yOrderComparator = yOrderComparator)
     
     # create widget
     htmlwidgets::createWidget(name = "sankeyNetwork", x = list(links = LinksDF, 
