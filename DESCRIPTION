@@ -2,13 +2,16 @@ Package: sankeyD3
 Type: Package
 Title: D3 JavaScript Sankey Graphs from R
 Description: Creates 'D3' 'JavaScript' Sankey graphs from 'R'.
-Version: 0.3.1
-Date: 2016-11-18
+Version: 0.3.2
+Date: 2017-03-21
 Authors@R: c(
     person("Florian","Breitwieser", email = "florian.bw@gmail.com", role = c("aut","cre")),
     person("Christopher", "Gandrud", role = "aut"),
     person("J.J.", "Allaire", role = "aut"),
     person("Kenton", "Russell", role = "aut"),
+    person("Mike", "Bostock", role = c("aut", "cph")
+         , comment = "d3.js library, http://d3js.org"
+       ),
     person("B.W.", "Lewis", role = "ctb"),
     person("Kevin", "Kuo", role = "ctb"),
     person("Charles", "Sese", role = "ctb"),
@@ -22,6 +25,7 @@ License: GPL (>= 3)
 Depends:
     R (>= 3.0.0)
 Imports:
+    d3r,
     htmlwidgets (>= 0.3.2),
     shiny,
     magrittr

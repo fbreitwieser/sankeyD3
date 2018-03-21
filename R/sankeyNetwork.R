@@ -245,8 +245,22 @@ sankeyNetwork <- function(Links, Nodes, Source, Target, Value,
     # create widget
     htmlwidgets::createWidget(name = "sankeyNetwork", x = list(links = LinksDF, 
         nodes = NodesDF, options = options), width = width, height = height, 
-        htmlwidgets::sizingPolicy(padding = 10, browser.fill = TRUE), 
+        sizingPolicy = htmlwidgets::sizingPolicy(padding = 10, browser.fill = TRUE), 
+        dependencies = list(d3r::d3_dep_v4(), sankey_dep()),
         package = "sankeyD3")
+}
+
+#' @keywords internal
+sankey_dep <- function() {
+  htmltools::htmlDependency(
+    name = "sankey",
+    version = "0.1",
+    src = c(
+      file = system.file("htmlwidgets/lib/d3-sankey/src", package="sankeyD3")
+    ),
+    script = "sankey.js"#,
+    #stylesheet = "d2b_custom.css"
+  )
 }
 
 #' @rdname sankeyD3-shiny

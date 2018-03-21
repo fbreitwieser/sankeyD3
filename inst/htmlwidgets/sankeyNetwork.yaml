@@ -1,9 +1,5 @@
-dependencies:
-  - name: d3
-    version: 3.5.2
-    src: "htmlwidgets/lib/d3-4.2.7"
-    script: d3.min.js
-  - name: sankey
-    version: 1.0
-    src: "htmlwidgets/lib/d3-sankey/src"
-    script: sankey.js
+#dependencies:
+#  - name: sankey
+#    version: 1.0
+#    src: "htmlwidgets/lib/d3-sankey/src"
+#    script: sankey.js
