@@ -2,10 +2,9 @@
 % Please edit documentation in R/sankeyNetwork.R
 \docType{package}
 \name{sankeyD3-package}
-\alias{sankeyD3}
 \alias{sankeyD3-package}
+\alias{sankeyD3}
 \title{Tools for Creating D3 Sankey Graphs from R}
 \description{
 Creates D3 JavaScript Sankey graphs from R. Based on networkD3.
 }
-

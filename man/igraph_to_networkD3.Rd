@@ -67,4 +67,3 @@ sankeyNetwork(Links = sj_list$links, Nodes = sj_list$nodes, Source = 'source',
 }
 
 }
-

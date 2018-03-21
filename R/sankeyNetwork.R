@@ -56,12 +56,19 @@ NULL
 #' frame with the value/size of each node. If \code{NULL}, the value is 
 #' calculated based on the maximum of the sum of incoming and outoging 
 #' links
+#' @param NodeColor character specifying a column in the \code{Nodes} data
+#' frame with the color of each node. Overrides colourScale.
+#' @param NodeFontColor character specifying a column in the \code{Nodes} data
+#' frame with the color of the label of each node.
+#' @param NodeFontSize character specifying a column in the \code{Nodes} data
+#' frame with the size of the label of each node.
 #' @param units character string describing physical units (if any) for Value
 #' @param colourScale character string specifying the categorical colour
 #' scale for the nodes. See
 #' \url{https://github.com/mbostock/d3/wiki/Ordinal-Scales}.
 #' @param fontSize numeric font size in pixels for the node text labels.
 #' @param fontFamily font family for the node text labels.
+#' @param fontColor font color for the node text labels.
 #' @param nodeWidth numeric width of each node.
 #' @param nodePadding numeric essentially influences the width height.
 #' @param nodeStrokeWidth numeric width of the stroke around nodes.
@@ -104,6 +111,8 @@ NULL
 #' @param showNodeValues boolean Show values above nodes. Might require and increased node margin.
 #' @param scaleNodeBreadthsByString Put nodes at positions relatively to string lengths - 
 #' only work well currently with align='none'
+#' @param yOrderComparator Order nodes on the y axis by a custom function instead of ascending or 
+#' descending depth.
 #'
 #' @examples
 #' \dontrun{
@@ -136,7 +145,9 @@ NULL
 #' @export
 sankeyNetwork <- function(Links, Nodes, Source, Target, Value, 
     NodeID, NodeGroup = NodeID, LinkGroup = NULL, NodePosX = NULL, NodeValue = NULL,
-    units = "", colourScale = JS("d3.scaleOrdinal().range(d3.schemeCategory20)"), fontSize = 7,  fontFamily = NULL, 
+    NodeColor = NULL, NodeFontColor = NULL, NodeFontSize = NULL,
+    units = "", colourScale = JS("d3.scaleOrdinal().range(d3.schemeCategory20)"), 
+    fontSize = 7,  fontFamily = NULL, fontColor = NULL,
     nodeWidth = 15, nodePadding = 10, nodeStrokeWidth = 1, nodeCornerRadius = 0,
     margin = NULL, title = NULL,
     numberFormat = ",.5g", orderByPath = FALSE, highlightChildLinks  = FALSE,
@@ -198,6 +209,18 @@ sankeyNetwork <- function(Links, Nodes, Source, Target, Value,
         NodesDF$value <- Nodes[, NodeValue]
     }
     
+    if (is.character(NodeColor)) {
+        NodesDF$color = Nodes[, NodeColor]
+    }
+    
+    if (is.character(NodeFontSize)) {
+        NodesDF$fontSize = Nodes[, NodeFontSize]
+    }
+    
+    if (is.character(NodeFontColor)) {
+        NodesDF$fontColor = Nodes[, NodeFontColor]
+    }
+    
     if (is.character(LinkGroup)) {
         LinksDF$group <- Links[, LinkGroup]
     }
@@ -206,7 +229,7 @@ sankeyNetwork <- function(Links, Nodes, Source, Target, Value,
     
     # create options
     options = list(NodeID = NodeID, NodeGroup = NodeGroup, LinkGroup = LinkGroup, 
-        colourScale = colourScale, fontSize = fontSize, fontFamily = fontFamily, 
+        colourScale = colourScale, fontSize = fontSize, fontFamily = fontFamily, fontColor = fontColor,
         nodeWidth = nodeWidth, nodePadding = nodePadding, nodeStrokeWidth = nodeStrokeWidth,
         nodeCornerRadius = nodeCornerRadius, dragX = dragX, dragY = dragY,
         numberFormat = numberFormat, orderByPath = orderByPath,

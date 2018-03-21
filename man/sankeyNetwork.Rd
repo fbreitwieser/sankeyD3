@@ -9,19 +9,20 @@ specifically for Sankey diagrams \url{http://bost.ocks.org/mike/sankey/}.
 }
 \usage{
 sankeyNetwork(Links, Nodes, Source, Target, Value, NodeID, NodeGroup = NodeID,
-  LinkGroup = NULL, NodePosX = NULL, NodeValue = NULL, units = "",
+  LinkGroup = NULL, NodePosX = NULL, NodeValue = NULL, NodeColor = NULL,
+  NodeFontColor = NULL, NodeFontSize = NULL, units = "",
   colourScale = JS("d3.scaleOrdinal().range(d3.schemeCategory20)"),
-  fontSize = 7, fontFamily = NULL, nodeWidth = 15, nodePadding = 10,
-  nodeStrokeWidth = 1, nodeCornerRadius = 0, margin = NULL,
-  title = NULL, numberFormat = ",.5g", orderByPath = FALSE,
-  highlightChildLinks = FALSE, doubleclickTogglesChildren = FALSE,
-  xAxisDomain = NULL, dragX = FALSE, dragY = FALSE, height = NULL,
-  width = NULL, iterations = 32, zoom = FALSE, align = "justify",
-  showNodeValues = TRUE, linkType = "bezier", curvature = 0.5,
-  linkColor = "#A0A0A0", nodeLabelMargin = 2, linkOpacity = 0.5,
-  linkGradient = FALSE, nodeShadow = FALSE,
-  scaleNodeBreadthsByString = FALSE, xScalingFactor = 1,
-  yOrderComparator = NULL)
+  fontSize = 7, fontFamily = NULL, fontColor = NULL, nodeWidth = 15,
+  nodePadding = 10, nodeStrokeWidth = 1, nodeCornerRadius = 0,
+  margin = NULL, title = NULL, numberFormat = ",.5g",
+  orderByPath = FALSE, highlightChildLinks = FALSE,
+  doubleclickTogglesChildren = FALSE, xAxisDomain = NULL, dragX = FALSE,
+  dragY = FALSE, height = NULL, width = NULL, iterations = 32,
+  zoom = FALSE, align = "justify", showNodeValues = TRUE,
+  linkType = "bezier", curvature = 0.5, linkColor = "#A0A0A0",
+  nodeLabelMargin = 2, linkOpacity = 0.5, linkGradient = FALSE,
+  nodeShadow = FALSE, scaleNodeBreadthsByString = FALSE,
+  xScalingFactor = 1, yOrderComparator = NULL)
 }
 \arguments{
 \item{Links}{a data frame object with the links between the nodes. It should
@@ -60,6 +61,15 @@ frame with the value/size of each node. If \code{NULL}, the value is
 calculated based on the maximum of the sum of incoming and outoging 
 links}
 
+\item{NodeColor}{character specifying a column in the \code{Nodes} data
+frame with the color of each node. Overrides colourScale.}
+
+\item{NodeFontColor}{character specifying a column in the \code{Nodes} data
+frame with the color of the label of each node.}
+
+\item{NodeFontSize}{character specifying a column in the \code{Nodes} data
+frame with the size of the label of each node.}
+
 \item{units}{character string describing physical units (if any) for Value}
 
 \item{colourScale}{character string specifying the categorical colour
@@ -70,13 +80,15 @@ scale for the nodes. See
 
 \item{fontFamily}{font family for the node text labels.}
 
+\item{fontColor}{font color for the node text labels.}
+
 \item{nodeWidth}{numeric width of each node.}
 
 \item{nodePadding}{numeric essentially influences the width height.}
 
 \item{nodeStrokeWidth}{numeric width of the stroke around nodes.}
 
-\item{nodeCornerRadius}{numberic Radius for rounded nodes.}
+\item{nodeCornerRadius}{numeric Radius for rounded nodes.}
 
 \item{margin}{an integer or a named \code{list}/\code{vector} of integers
 for the plot margins. If using a named \code{list}/\code{vector},
@@ -140,7 +152,8 @@ only work well currently with align='none'}
 
 \item{xScalingFactor}{numeric Scale the computed x position of the nodes by this value.}
 
-\item{yOrderComparator}{Javascript comparison function for custom vertical sort of nodes. Default is sort by ascending breadth. Use e.g. yOrderComparator = JS("function(a, b){return a.name < b.name ? -1 : a.name > b.name ? 1 : 0;}") to sort by name.}
+\item{yOrderComparator}{Order nodes on the y axis by a custom function instead of ascending or 
+descending depth.}
 }
 \description{
 Create a D3 JavaScript Sankey diagram
@@ -171,4 +184,3 @@ sankeyNetwork(Links = energy$links, Nodes = energy$nodes, Source = 'source',
 \seealso{
 \code{\link{JS}}
 }
-

@@ -6,9 +6,14 @@ URL <- "https://cdn.rawgit.com/christophergandrud/networkD3/master/JSONdata/ener
 Energy <- jsonlite::fromJSON(URL)
 
 # Plot
+
+Energy$nodes$font_color <- c("black", "red", "green")
+Energy$nodes$font_size <- 5:10
 sankeyNetwork(Links = Energy$links, Nodes = Energy$nodes, Source = "source",
               Target = "target", Value = "value", NodeID = "name",
-              fontSize = 12, nodeWidth = 30)
+              fontSize = 12, nodeWidth = 30, 
+              NodeColor = "font_color",
+              NodeFontColor = "font_color", NodeFontSize = "font_size")
 
 # And with a different font
 sankeyNetwork(Links = Energy$links, Nodes = Energy$nodes, Source = "source",

@@ -71,7 +71,9 @@ HTMLWidgets.widget({
         var color = eval(options.colourScale);
         
         var color_node = function color_node(d){
-          if (d.group){
+          if (d.color) {
+            return d.color;
+          } else if (d.group){
             return color(d.group);
           } else {
             return options.linkColor;
@@ -511,7 +513,20 @@ HTMLWidgets.widget({
             .attr("transform", null)
             .text(function(d) { return d.name; })
             .style("cursor", "move")
-            .style("font-size", options.fontSize + "px")
+            .style("fill", function(d) {
+              if (d.fontColor) {
+                return d.fontColor;
+              } else {
+                return options.fontColor ? options.fontColor : "inherit";
+              }
+            })
+            .style("font-size", function(d) {
+              if (d.fontSize) {
+                return d.fontSize;
+              } else {
+                return options.fontSize + "px";
+              }
+            })
             .style("font-family", options.fontFamily ? options.fontFamily : "inherit")
             .filter(function(d) { return d.x < width / 2 || (options.align == "none"); })
             .attr("x", options.nodeLabelMargin + sankey.nodeWidth())
@@ -522,12 +537,25 @@ HTMLWidgets.widget({
             .append("text")
             .attr("x", sankey.nodeWidth()/2)
             .attr("text-anchor", "middle")
-            .attr("dy", "-" + (options.nodeStrokeWidth + .1 ) + "em")
+            .attr("dy", "-" + (options.nodeStrokeWidth/2 + 1 ) + "px")
             .attr("transform", null)
             .attr("class", "node-number")
             .text(function(d) { return format(d.value); })
             .style("cursor", "move")
-            .style("font-size", ( options.fontSize - 2) + "px")
+            .style("fill", function(d) {
+              if (d.fontColor) {
+                return d.fontColor;
+              } else {
+                return options.fontColor ? options.fontColor : "inherit";
+              }
+            })
+            .style("font-size", function(d) {
+              if (d.fontSize) {
+                return d.fontSize;
+              } else {
+                return (options.fontSize - 2) + "px";
+              }
+            })
             .style("font-family", options.fontFamily ? options.fontFamily : "inherit");
         }
         
