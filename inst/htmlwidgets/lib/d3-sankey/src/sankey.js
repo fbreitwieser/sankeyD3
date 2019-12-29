@@ -21,7 +21,7 @@ d3.sankey = function() {
       yOrderComparator = function ascendingDepth(a, b) {
         if (orderByPath) {
           return ( a.path < b.path ? -1 : (a.path > b.path ? 1 : 0 ));
-        } else if(orderByPosY) {
+        } else if(false) {
           return a.posY - b.posY;
         }else {
           return a.y - b.y;
