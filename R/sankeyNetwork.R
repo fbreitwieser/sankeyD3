@@ -52,6 +52,8 @@ NULL
 #' \code{Links}. Used to color the links in the network.
 #' @param NodePosX character specifying a column in the \code{Nodes} data
 #' frame that specifies the 0-based ordering of the nodes along the x-axis.
+#' @param NodePosY character specifying a column in the \code{Nodes} data
+#' frame that specifies the 0-based ordering of the nodes along the y-axis.
 #' @param NodeValue character specifying a column in the \code{Nodes} data
 #' frame with the value/size of each node. If \code{NULL}, the value is 
 #' calculated based on the maximum of the sum of incoming and outoging 
