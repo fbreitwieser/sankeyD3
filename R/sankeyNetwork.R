@@ -156,7 +156,7 @@ sankeyNetwork <- function(Links, Nodes, Source, Target, Value,
     height = NULL, width = NULL, iterations = 32, zoom = FALSE, align = "justify",
     showNodeValues = TRUE, linkType = "bezier", curvature = .5,  linkColor = "#A0A0A0",
     nodeLabelMargin = 2, linkOpacity = .5, linkGradient = FALSE, nodeShadow = FALSE, 
-    scaleNodeBreadthsByString = FALSE, xScalingFactor = 1,
+    scaleNodeBreadthsByString = FALSE, xScalingFactor = 1, NodePosY = NULL,
     yOrderComparator = NULL) 
 {
     # Check if data is zero indexed
@@ -201,6 +201,10 @@ sankeyNetwork <- function(Links, Nodes, Source, Target, Value,
         NodesDF$group <- Nodes[, NodeGroup]
     }
 
+    if (is.character(NodePosY)) {
+        NodesDF$posY <- Nodes[, NodePosY]
+    }
+    
     if (is.character(NodePosX)) {
         NodesDF$posX <- Nodes[, NodePosX]
     }
