@@ -57,7 +57,11 @@ d3.sankey = function() {
     orderByPath = _;
     return sankey;
   };
-
+  sankey.orderByPosY = function(_) {
+    if (!arguments.length) return orderByPosY;
+    orderByPosY = _;
+    return sankey;
+  };
   sankey.curvature = function(_) {
     if (!arguments.length) return curvature;
     curvature = _;
