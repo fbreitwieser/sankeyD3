@@ -203,6 +203,9 @@ sankeyNetwork <- function(Links, Nodes, Source, Target, Value,
 
     if (is.character(NodePosY)) {
         NodesDF$posY <- Nodes[, NodePosY]
+        orderByPosY <- TRUE
+    }else{
+        orderByPosY <- FALSE
     }
     
     if (is.character(NodePosX)) {
@@ -232,7 +235,7 @@ sankeyNetwork <- function(Links, Nodes, Source, Target, Value,
     margin <- margin_handler(margin)
     
     # create options
-    options = list(NodeID = NodeID, NodeGroup = NodeGroup, LinkGroup = LinkGroup, 
+    options = list(NodeID = NodeID, NodeGroup = NodeGroup, LinkGroup = LinkGroup, orderByPosY = orderByPosY,
         colourScale = colourScale, fontSize = fontSize, fontFamily = fontFamily, fontColor = fontColor,
         nodeWidth = nodeWidth, nodePadding = nodePadding, nodeStrokeWidth = nodeStrokeWidth,
         nodeCornerRadius = nodeCornerRadius, dragX = dragX, dragY = dragY,
