@@ -11,6 +11,7 @@ d3.sankey = function() {
       linkType = 'bezier',
       reverse = false,
       orderByPath = false,
+      orderByPosY = false,
       scaleNodeBreadthsByString = false,
       curvature = .5,
       showNodeValues = false,
@@ -20,7 +21,9 @@ d3.sankey = function() {
       yOrderComparator = function ascendingDepth(a, b) {
         if (orderByPath) {
           return ( a.path < b.path ? -1 : (a.path > b.path ? 1 : 0 ));
-        } else {
+        } else if(orderByPosY) {
+          return a.posY - b.posY;
+        }else {
           return a.y - b.y;
         }
       }
