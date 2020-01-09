@@ -22,7 +22,11 @@ d3.sankey = function() {
         if (orderByPath) {
           return ( a.path < b.path ? -1 : (a.path > b.path ? 1 : 0 ));
         } else if(orderByPosY) {
-          return a.posY - b.posY;
+          if(a.posY != b.posY){
+            return a.posY - b.posY;
+          }else{
+            return a.y - b.y
+          }
         }else {
           return a.y - b.y;
         }
