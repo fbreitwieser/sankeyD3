@@ -144,6 +144,7 @@ HTMLWidgets.widget({
             .scaleNodeBreadthsByString(options.scaleNodeBreadthsByString)
             .curvature(options.curvature)
             .orderByPath(options.orderByPath)
+            .orderByPosY(options.orderByPosY)
             .showNodeValues(options.showNodeValues)
             .nodeCornerRadius(options.nodeCornerRadius);
             

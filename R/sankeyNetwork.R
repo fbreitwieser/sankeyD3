@@ -52,6 +52,8 @@ NULL
 #' \code{Links}. Used to color the links in the network.
 #' @param NodePosX character specifying a column in the \code{Nodes} data
 #' frame that specifies the 0-based ordering of the nodes along the x-axis.
+#' @param NodePosY character specifying a column in the \code{Nodes} data
+#' frame that specifies the 0-based ordering of the nodes along the y-axis.
 #' @param NodeValue character specifying a column in the \code{Nodes} data
 #' frame with the value/size of each node. If \code{NULL}, the value is 
 #' calculated based on the maximum of the sum of incoming and outoging 
@@ -156,7 +158,7 @@ sankeyNetwork <- function(Links, Nodes, Source, Target, Value,
     height = NULL, width = NULL, iterations = 32, zoom = FALSE, align = "justify",
     showNodeValues = TRUE, linkType = "bezier", curvature = .5,  linkColor = "#A0A0A0",
     nodeLabelMargin = 2, linkOpacity = .5, linkGradient = FALSE, nodeShadow = FALSE, 
-    scaleNodeBreadthsByString = FALSE, xScalingFactor = 1,
+    scaleNodeBreadthsByString = FALSE, xScalingFactor = 1, NodePosY = NULL,
     yOrderComparator = NULL) 
 {
     # Check if data is zero indexed
@@ -201,6 +203,13 @@ sankeyNetwork <- function(Links, Nodes, Source, Target, Value,
         NodesDF$group <- Nodes[, NodeGroup]
     }
 
+    if (is.character(NodePosY)) {
+        NodesDF$posY <- Nodes[, NodePosY]
+        orderByPosY <- TRUE
+    }else{
+        orderByPosY <- FALSE
+    }
+    
     if (is.character(NodePosX)) {
         NodesDF$posX <- Nodes[, NodePosX]
     }
@@ -228,7 +237,7 @@ sankeyNetwork <- function(Links, Nodes, Source, Target, Value,
     margin <- margin_handler(margin)
     
     # create options
-    options = list(NodeID = NodeID, NodeGroup = NodeGroup, LinkGroup = LinkGroup, 
+    options = list(NodeID = NodeID, NodeGroup = NodeGroup, LinkGroup = LinkGroup, orderByPosY = orderByPosY,
         colourScale = colourScale, fontSize = fontSize, fontFamily = fontFamily, fontColor = fontColor,
         nodeWidth = nodeWidth, nodePadding = nodePadding, nodeStrokeWidth = nodeStrokeWidth,
         nodeCornerRadius = nodeCornerRadius, dragX = dragX, dragY = dragY,
