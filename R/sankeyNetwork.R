@@ -53,8 +53,8 @@ NULL
 #' @param NodePosX character specifying a column in the \code{Nodes} data
 #' frame that specifies the 0-based ordering of the nodes along the x-axis.
 #' @param NodeValue character specifying a column in the \code{Nodes} data
-#' frame with the value/size of each node. If \code{NULL}, the value is 
-#' calculated based on the maximum of the sum of incoming and outoging 
+#' frame with the value/size of each node. If \code{NULL}, the value is
+#' calculated based on the maximum of the sum of incoming and outoging
 #' links
 #' @param NodeColor character specifying a column in the \code{Nodes} data
 #' frame with the color of each node. Overrides colourScale.
@@ -63,9 +63,12 @@ NULL
 #' @param NodeFontSize character specifying a column in the \code{Nodes} data
 #' frame with the size of the label of each node.
 #' @param units character string describing physical units (if any) for Value
-#' @param colourScale character string specifying the categorical colour
-#' scale for the nodes. See
-#' \url{https://github.com/mbostock/d3/wiki/Ordinal-Scales}.
+#' @param colourScale character string specifying the categorical colour scale
+#'   for the nodes. See
+#'   \url{https://github.com/mbostock/d3/wiki/Ordinal-Scales}, can be one of
+#'   `c("d3.schemeCategory10", "d3.schemeCategory20", "d3.schemeCategory20b",
+#'   "d3.schemeCategory20c")`. It can also be a **d3_scales** object created by
+#'   [scale_d3_*][scale_d3_manual] function.
 #' @param fontSize numeric font size in pixels for the node text labels.
 #' @param fontFamily font family for the node text labels.
 #' @param fontColor font color for the node text labels.
@@ -82,9 +85,9 @@ NULL
 #' to accomodate long text labels.
 #' @param height numeric height for the network graph's frame area in pixels.
 #' @param width numeric width for the network graph's frame area in pixels.
-#' @param title character Title of plot, put in the upper-left corner of the Sankey 
-#' @param iterations numeric. Number of iterations in the diagramm layout for 
-#' computation of the depth (y-position) of each node. Note: this runs in the 
+#' @param title character Title of plot, put in the upper-left corner of the Sankey
+#' @param iterations numeric. Number of iterations in the diagramm layout for
+#' computation of the depth (y-position) of each node. Note: this runs in the
 #' browser on the client so don't push it too high.
 #' @param align character Alignment of the nodes. One of 'right', 'left', 'justify', 'center', 'none'.
 #' If 'none', then the labels of the nodes are always to the right of the node.
@@ -98,43 +101,50 @@ NULL
 #' @param dragY boolean Allow moving nodes along the y-axis?
 #' @param nodeShadow boolean Add a shadow to the nodes?
 #' @param xScalingFactor numeric Scale the computed x position of the nodes by this value.
-#' @param xAxisDomain character[] If xAxisDomain is given, an axis with those value is 
+#' @param xAxisDomain character[] If xAxisDomain is given, an axis with those value is
 #' added to the bottom of the plot. Only sensible when also NodeXPos are given.
 #' @param linkType character One of 'bezier', 'l-bezier', 'trapezoid', 'path1' and 'path2'.
 #' @param orderByPath boolean Order the nodes vertically along a path - this layout only
 #' works well for trees where each node has maximum one parent.
-#' @param highlightChildLinks boolean Highlight all the links going right from a node or 
+#' @param highlightChildLinks boolean Highlight all the links going right from a node or
 #' link.
 #' @param doubleclickTogglesChildren boolean Show/hide target nodes and paths to the left
 #'  on double-click. Does not hide incoming links of target nodes, yet.
 #' @param curvature numeric Curvature parameter for bezier links - between 0 and 1.
 #' @param showNodeValues boolean Show values above nodes. Might require and increased node margin.
-#' @param scaleNodeBreadthsByString Put nodes at positions relatively to string lengths - 
+#' @param scaleNodeBreadthsByString Put nodes at positions relatively to string lengths -
 #' only work well currently with align='none'
-#' @param yOrderComparator Order nodes on the y axis by a custom function instead of ascending or 
+#' @param yOrderComparator Order nodes on the y axis by a custom function instead of ascending or
 #' descending depth.
 #'
 #' @examples
 #' \dontrun{
 #' # Recreate Bostock Sankey diagram: http://bost.ocks.org/mike/sankey/
 #' # Load energy projection data
-#' URL <- paste0('https://cdn.rawgit.com/christophergandrud/networkD3/',
-#'               'master/JSONdata/energy.json')
+#' URL <- paste0(
+#'     "https://cdn.rawgit.com/christophergandrud/networkD3/",
+#'     "master/JSONdata/energy.json"
+#' )
 #' energy <- jsonlite::fromJSON(URL)
-#' 
+#'
 #' # Plot
-#' sankeyNetwork(Links = energy$links, Nodes = energy$nodes, Source = 'source',
-#'              Target = 'target', Value = 'value', NodeID = 'name',
-#'              units = 'TWh', fontSize = 12, nodeWidth = 30)
+#' sankeyNetwork(
+#'     Links = energy$links, Nodes = energy$nodes, Source = "source",
+#'     Target = "target", Value = "value", NodeID = "name",
+#'     units = "TWh", fontSize = 12, nodeWidth = 30
+#' )
 #'
 #' # Colour links
-#' energy$links$energy_type <- sub(' .*', '',
-#'                                energy$nodes[energy$links$source + 1, 'name'])
+#' energy$links$energy_type <- sub(
+#'     " .*", "",
+#'     energy$nodes[energy$links$source + 1, "name"]
+#' )
 #'
-#' sankeyNetwork(Links = energy$links, Nodes = energy$nodes, Source = 'source',
-#'              Target = 'target', Value = 'value', NodeID = 'name',
-#'              LinkGroup = 'energy_type', NodeGroup = NULL)
-#'
+#' sankeyNetwork(
+#'     Links = energy$links, Nodes = energy$nodes, Source = "source",
+#'     Target = "target", Value = "value", NodeID = "name",
+#'     LinkGroup = "energy_type", NodeGroup = NULL
+#' )
 #' }
 #' @source
 #' D3.js was created by Michael Bostock. See \url{http://d3js.org/} and, more
@@ -143,27 +153,23 @@ NULL
 #' @seealso \code{\link{JS}}
 #'
 #' @export
-sankeyNetwork <- function(Links, Nodes, Source, Target, Value, 
-    NodeID, NodeGroup = NodeID, LinkGroup = NULL, NodePosX = NULL, NodeValue = NULL,
-    NodeColor = NULL, NodeFontColor = NULL, NodeFontSize = NULL,
-    units = "", colourScale = JS("d3.scaleOrdinal().range(d3.schemeCategory20)"), 
-    fontSize = 7,  fontFamily = NULL, fontColor = NULL,
-    nodeWidth = 15, nodePadding = 10, nodeStrokeWidth = 1, nodeCornerRadius = 0,
-    margin = NULL, title = NULL,
-    numberFormat = ",.5g", orderByPath = FALSE, highlightChildLinks  = FALSE,
-    doubleclickTogglesChildren = FALSE, xAxisDomain = NULL,
-    dragX = FALSE, dragY = FALSE,
-    height = NULL, width = NULL, iterations = 32, zoom = FALSE, align = "justify",
-    showNodeValues = TRUE, linkType = "bezier", curvature = .5,  linkColor = "#A0A0A0",
-    nodeLabelMargin = 2, linkOpacity = .5, linkGradient = FALSE, nodeShadow = FALSE, 
-    scaleNodeBreadthsByString = FALSE, xScalingFactor = 1,
-    yOrderComparator = NULL) 
-{
+sankeyNetwork <- function(Links, Nodes, Source, Target, Value,
+                          NodeID, NodeGroup = NodeID, LinkGroup = NULL, NodePosX = NULL, NodeValue = NULL,
+                          NodeColor = NULL, NodeFontColor = NULL, NodeFontSize = NULL,
+                          units = "", colourScale = JS("d3.scaleOrdinal().range(d3.schemeCategory20)"),
+                          fontSize = 7, fontFamily = NULL, fontColor = NULL,
+                          nodeWidth = 15, nodePadding = 10, nodeStrokeWidth = 1, nodeCornerRadius = 0,
+                          margin = NULL, title = NULL,
+                          numberFormat = ",.5g", orderByPath = FALSE, highlightChildLinks = FALSE,
+                          doubleclickTogglesChildren = FALSE, xAxisDomain = NULL,
+                          dragX = FALSE, dragY = FALSE,
+                          height = NULL, width = NULL, iterations = 32, zoom = FALSE, align = "justify",
+                          showNodeValues = TRUE, linkType = "bezier", curvature = .5, linkColor = "#A0A0A0",
+                          nodeLabelMargin = 2, linkOpacity = .5, linkGradient = FALSE, nodeShadow = FALSE,
+                          scaleNodeBreadthsByString = FALSE, xScalingFactor = 1,
+                          yOrderComparator = NULL) {
     # Check if data is zero indexed
     check_zero(Links[, Source], Links[, Target])
-    
-    # Hack for UI consistency. Think of improving.
-    colourScale <- as.character(colourScale)
     
     # If tbl_df convert to plain data.frame
     Links <- tbl_df_strip(Links)
@@ -178,104 +184,138 @@ sankeyNetwork <- function(Links, Nodes, Source, Target, Value,
     }
     # if Source or Target are missing assume Source is the first
     # column Target is the second column
-    if (missing(Source)) 
-        Source = 1
-    if (missing(Target)) 
-        Target = 2
+    if (missing(Source)) {
+        Source <- 1
+    }
+    if (missing(Target)) {
+        Target <- 2
+    }
     
-    LinksDF <- data.frame(source=Links[, Source], target = Links[, Target])
+    LinksDF <- data.frame(source = Links[, Source], target = Links[, Target])
     
     if (missing(Value)) {
-        LinksDF$value = 1
+        LinksDF$value <- 1
     } else {
         LinksDF$value <- Links[, Value]
     }
     
     # if NodeID is missing assume NodeID is the first column
-    if (missing(NodeID)) 
-        NodeID = 1
-    NodesDF <- data.frame(name=Nodes[, NodeID], stringsAsFactors = FALSE)
+    if (missing(NodeID)) {
+        NodeID <- 1
+    }
+    NodesDF <- data.frame(name = Nodes[, NodeID], stringsAsFactors = FALSE)
     
     # add node group if specified
     if (is.character(NodeGroup)) {
         NodesDF$group <- Nodes[, NodeGroup]
     }
-
+    
     if (is.character(NodePosX)) {
         NodesDF$posX <- Nodes[, NodePosX]
     }
-
+    
     if (is.character(NodeValue)) {
         NodesDF$value <- Nodes[, NodeValue]
     }
     
     if (is.character(NodeColor)) {
-        NodesDF$color = Nodes[, NodeColor]
+        NodesDF$color <- Nodes[, NodeColor]
     }
     
     if (is.character(NodeFontSize)) {
-        NodesDF$fontSize = Nodes[, NodeFontSize]
+        NodesDF$fontSize <- Nodes[, NodeFontSize]
     }
     
     if (is.character(NodeFontColor)) {
-        NodesDF$fontColor = Nodes[, NodeFontColor]
+        NodesDF$fontColor <- Nodes[, NodeFontColor]
     }
     
     if (is.character(LinkGroup)) {
         LinksDF$group <- Links[, LinkGroup]
     }
-
+    
+    # Hack for UI consistency. Think of improving.
+    if (is_d3_scales(colourScale)) {
+        if (inherits(colourScale, "d3_scales_chr") && has_names(colourScale$values)) {
+            colourScale$breaks <- colourScale$breaks %||% names(colourScale$values)
+        } else {
+            nodes_breaks <- levels(NodesDF$color) %||% 
+                sort(unique(NodesDF$color)) %||%
+                levels(NodesDF$group) %||% 
+                sort(unique(NodesDF$group))
+            links_breaks <- levels(LinksDF$group) %||% 
+                sort(unique(LinksDF$group)) 
+            colourScale$breaks <- colourScale$breaks %||% c(
+                nodes_breaks, links_breaks
+            )
+        }
+        colourScale <- build_d3_scales(colourScale)
+    } else {
+        colourScale <- as.character(colourScale[[1L]])
+        if (grepl("d3.scaleOrdinal", colourScale, fixed = TRUE)) {
+            colourScale <- colourScale
+        } else {
+            colourScale <- sprintf("d3.scaleOrdinal().range(%s)", colourScale)
+        }
+    }
     margin <- margin_handler(margin)
     
     # create options
-    options = list(NodeID = NodeID, NodeGroup = NodeGroup, LinkGroup = LinkGroup, 
+    options <- list(
+        NodeID = NodeID, NodeGroup = NodeGroup, LinkGroup = LinkGroup,
         colourScale = colourScale, fontSize = fontSize, fontFamily = fontFamily, fontColor = fontColor,
         nodeWidth = nodeWidth, nodePadding = nodePadding, nodeStrokeWidth = nodeStrokeWidth,
         nodeCornerRadius = nodeCornerRadius, dragX = dragX, dragY = dragY,
         numberFormat = numberFormat, orderByPath = orderByPath,
-        units = units, margin = margin, iterations = iterations, 
+        units = units, margin = margin, iterations = iterations,
         zoom = zoom, linkType = linkType, curvature = curvature,
         highlightChildLinks = highlightChildLinks, doubleclickTogglesChildren = doubleclickTogglesChildren,
         showNodeValues = showNodeValues, align = align, xAxisDomain = xAxisDomain,
-        title = title, nodeLabelMargin = nodeLabelMargin, 
+        title = title, nodeLabelMargin = nodeLabelMargin,
         linkColor = linkColor, linkOpacity = linkOpacity, linkGradient = linkGradient, nodeShadow = nodeShadow,
         scaleNodeBreadthsByString = scaleNodeBreadthsByString, xScalingFactor = xScalingFactor,
-        yOrderComparator = yOrderComparator)
+        yOrderComparator = yOrderComparator
+    )
     
     # create widget
-    htmlwidgets::createWidget(name = "sankeyNetwork", x = list(links = LinksDF, 
-        nodes = NodesDF, options = options), width = width, height = height, 
-        sizingPolicy = htmlwidgets::sizingPolicy(padding = 10, browser.fill = TRUE), 
+    htmlwidgets::createWidget(
+        name = "sankeyNetwork", x = list(
+            links = LinksDF,
+            nodes = NodesDF, 
+            options = options
+        ), width = width, height = height,
+        sizingPolicy = htmlwidgets::sizingPolicy(padding = 10, browser.fill = TRUE),
         dependencies = list(d3r::d3_dep_v4(), sankey_dep()),
-        package = "sankeyD3")
+        package = "sankeyD3"
+    )
 }
 
 #' @keywords internal
 sankey_dep <- function() {
-  htmltools::htmlDependency(
-    name = "sankey",
-    version = "0.1",
-    src = c(
-      file = system.file("htmlwidgets/lib/d3-sankey/src", package="sankeyD3")
-    ),
-    script = "sankey.js"#,
-    #stylesheet = "d2b_custom.css"
-  )
+    htmltools::htmlDependency(
+        name = "sankey",
+        version = "0.1",
+        src = c(
+            file = system.file("htmlwidgets/lib/d3-sankey/src", package = "sankeyD3")
+        ),
+        script = "sankey.js" # ,
+        # stylesheet = "d2b_custom.css"
+    )
 }
 
 #' @rdname sankeyD3-shiny
 #' @export
 sankeyNetworkOutput <- function(outputId, width = "100%", height = "500px") {
-    htmlwidgets::shinyWidgetOutput(outputId, "sankeyNetwork", width, height, 
-        package = "sankeyD3")
+    htmlwidgets::shinyWidgetOutput(outputId, "sankeyNetwork", width, height,
+                                   package = "sankeyD3"
+    )
 }
 
 #' @rdname sankeyD3-shiny
 #' @export
 renderSankeyNetwork <- function(expr, env = parent.frame(), quoted = FALSE) {
-    if (!quoted) 
-        {
-            expr <- substitute(expr)
-        }  # force quoted
-  htmlwidgets::shinyRenderWidget(expr, sankeyNetworkOutput, env, quoted = TRUE)
+    if (!quoted) {
+        expr <- substitute(expr)
+    } # force quoted
+    htmlwidgets::shinyRenderWidget(expr, sankeyNetworkOutput, env, quoted = TRUE)
 }
