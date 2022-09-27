@@ -33,7 +33,7 @@ toJSONarray <- function(dtf){
 
   name.value <- function(i){
     quote <- '';
-    if(class(dtf[, i])!='numeric' && class(dtf[, i])!='integer'){
+    if(is.numeric(dtf[, i]) && is.integer(dtf[, i])){
       quote <- '"';
     }
     paste('"', i, '" : ', quote, dtf[,i], quote, sep='')
@@ -235,4 +235,12 @@ tbl_df_strip <- function(x) {
         x <- base::as.data.frame(x)
     }
     return(x)
+}
+
+has_names <- function(x) {
+  !is.null(names(x))
+}
+
+"%||%" <- function(x, y) {
+  if (!is.null(x)) x else y
 }
