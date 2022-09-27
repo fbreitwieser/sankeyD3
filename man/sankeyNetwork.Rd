@@ -108,8 +108,9 @@ frame with the size of the label of each node.}
 
 \item{colourScale}{character string specifying the categorical colour scale
 for the nodes. See
-\url{https://github.com/mbostock/d3/wiki/Ordinal-Scales}. It can also be a
-\strong{d3_scales} object created by \link[=scale_d3_manual]{scale_d3_*}.}
+\url{https://github.com/mbostock/d3/wiki/Ordinal-Scales}, can be one of
+\code{c("d3.schemeCategory10", "d3.schemeCategory20", "d3.schemeCategory20b", "d3.schemeCategory20c")}. It can also be a \strong{d3_scales} object created by
+\link[=scale_d3_manual]{scale_d3_*} function.}
 
 \item{fontSize}{numeric font size in pixels for the node text labels.}
 

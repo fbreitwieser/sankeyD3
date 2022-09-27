@@ -1,9 +1,11 @@
 #' Scientific Journal and Sci-Fi Themed Color Palettes for 'sankeyNetwork'
-#' Scientific Journal and Sci-Fi Themed Color Palettes for 'sankeyNetwork'
+#' @description Scientific Journal and Sci-Fi Themed Color Palettes for
+#'   'sankeyNetwork'.
 #' @param palette Palette type. Details see `pal_*` function in
 #'   [ggsci][ggsci::ggsci-package]
 #' @param alpha Transparency level, a real number in (0, 1].
 #' @param breaks a set of data values to be mapped.
+#' @seealso [scale_d3_manual]
 #' @name scale-d3
 NULL
 

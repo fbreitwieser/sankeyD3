@@ -21,8 +21,7 @@
 \alias{scale_d3_tron}
 \alias{scale_d3_uchicago}
 \alias{scale_d3_ucscgb}
-\title{Scientific Journal and Sci-Fi Themed Color Palettes for 'sankeyNetwork'
-Scientific Journal and Sci-Fi Themed Color Palettes for 'sankeyNetwork'}
+\title{Scientific Journal and Sci-Fi Themed Color Palettes for 'sankeyNetwork'}
 \usage{
 scale_d3_aaas(palette = "default", alpha = 1, breaks = NULL)
 
@@ -95,6 +94,9 @@ scale_d3_ucscgb(palette = "default", alpha = 1, breaks = NULL)
 \item{breaks}{a set of data values to be mapped.}
 }
 \description{
-Scientific Journal and Sci-Fi Themed Color Palettes for 'sankeyNetwork'
-Scientific Journal and Sci-Fi Themed Color Palettes for 'sankeyNetwork'
+Scientific Journal and Sci-Fi Themed Color Palettes for
+'sankeyNetwork'.
+}
+\seealso{
+\link{scale_d3_manual}
 }
