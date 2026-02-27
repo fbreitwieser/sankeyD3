@@ -4,8 +4,7 @@
 #'
 #' @name sankeyD3-package
 #' @aliases sankeyD3
-#' @docType package
-NULL
+"_PACKAGE"
 
 
 #' Shiny bindings for sankeyD3 widgets
@@ -67,7 +66,7 @@ NULL
 #' @param units character string describing physical units (if any) for Value
 #' @param colourScale character string specifying the categorical colour scale
 #'   for the nodes. See
-#'   \url{https://github.com/mbostock/d3/wiki/Ordinal-Scales}, can be one of
+#'   \url{https://d3js.org/d3-scale/ordinal}, can be one of
 #'   `c("d3.schemeCategory10", "d3.schemeCategory20", "d3.schemeCategory20b",
 #'   "d3.schemeCategory20c")`. It can also be a **d3_scales** object created by
 #'   [scale_d3_*][scale_d3_manual] function.
@@ -121,7 +120,7 @@ NULL
 #'
 #' @examples
 #' \dontrun{
-#' # Recreate Bostock Sankey diagram: http://bost.ocks.org/mike/sankey/
+#' # Recreate Bostock Sankey diagram: https://bost.ocks.org/mike/sankey/
 #' # Load energy projection data
 #' URL <- paste0(
 #'     "https://cdn.rawgit.com/christophergandrud/networkD3/",
@@ -149,14 +148,14 @@ NULL
 #' )
 #' }
 #' @source
-#' D3.js was created by Michael Bostock. See \url{http://d3js.org/} and, more
-#' specifically for Sankey diagrams \url{http://bost.ocks.org/mike/sankey/}.
+#' D3.js was created by Michael Bostock. See \url{https://d3js.org/} and, more
+#' specifically for Sankey diagrams \url{https://bost.ocks.org/mike/sankey/}.
 #'
 #' @seealso \code{\link{JS}}
 #'
 #' @export
 sankeyNetwork <- function(Links, Nodes, Source, Target, Value, 
-			  NodeID, NodeGroup = NodeID, LinkGroup = NULL, NodePosX = NULL, NodeValue = NULL,
+			  NodeID, NodeGroup = NodeID, LinkGroup = NULL, NodePosX = NULL, NodePosY = NULL, NodeValue = NULL,
 			  NodeColor = NULL, NodeFontColor = NULL, NodeFontSize = NULL,
 			  units = "", colourScale = JS("d3.scaleOrdinal().range(d3.schemeCategory20)"), 
 			  fontSize = 7,  fontFamily = NULL, fontColor = NULL,
@@ -168,7 +167,7 @@ sankeyNetwork <- function(Links, Nodes, Source, Target, Value,
 			  height = NULL, width = NULL, iterations = 32, zoom = FALSE, align = "justify",
 			  showNodeValues = TRUE, linkType = "bezier", curvature = .5,  linkColor = "#A0A0A0",
 			  nodeLabelMargin = 2, linkOpacity = .5, linkGradient = FALSE, nodeShadow = FALSE, 
-			  scaleNodeBreadthsByString = FALSE, xScalingFactor = 1, NodePosY = NULL,
+			  scaleNodeBreadthsByString = FALSE, xScalingFactor = 1,
 			  yOrderComparator = NULL) {
 
     # Check if data is zero indexed

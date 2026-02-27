@@ -4,8 +4,8 @@
 \alias{sankeyNetwork}
 \title{Create a D3 JavaScript Sankey diagram}
 \source{
-D3.js was created by Michael Bostock. See \url{http://d3js.org/} and, more
-specifically for Sankey diagrams \url{http://bost.ocks.org/mike/sankey/}.
+D3.js was created by Michael Bostock. See \url{https://d3js.org/} and, more
+specifically for Sankey diagrams \url{https://bost.ocks.org/mike/sankey/}.
 }
 \usage{
 sankeyNetwork(
@@ -18,6 +18,7 @@ sankeyNetwork(
   NodeGroup = NodeID,
   LinkGroup = NULL,
   NodePosX = NULL,
+  NodePosY = NULL,
   NodeValue = NULL,
   NodeColor = NULL,
   NodeFontColor = NULL,
@@ -90,6 +91,9 @@ data frame. Must be 0-indexed.}
 \item{NodePosX}{character specifying a column in the \code{Nodes} data
 frame that specifies the 0-based ordering of the nodes along the x-axis.}
 
+\item{NodePosY}{character specifying a column in the \code{Nodes} data
+frame that specifies the 0-based ordering of the nodes along the y-axis.}
+
 \item{NodeValue}{character specifying a column in the \code{Nodes} data
 frame with the value/size of each node. If \code{NULL}, the value is
 calculated based on the maximum of the sum of incoming and outoging
@@ -108,7 +112,7 @@ frame with the size of the label of each node.}
 
 \item{colourScale}{character string specifying the categorical colour scale
 for the nodes. See
-\url{https://github.com/mbostock/d3/wiki/Ordinal-Scales}, can be one of
+\url{https://d3js.org/d3-scale/ordinal}, can be one of
 \code{c("d3.schemeCategory10", "d3.schemeCategory20", "d3.schemeCategory20b", "d3.schemeCategory20c")}. It can also be a \strong{d3_scales} object created by
 \link[=scale_d3_manual]{scale_d3_*} function.}
 
@@ -196,7 +200,7 @@ Create a D3 JavaScript Sankey diagram
 }
 \examples{
 \dontrun{
-# Recreate Bostock Sankey diagram: http://bost.ocks.org/mike/sankey/
+# Recreate Bostock Sankey diagram: https://bost.ocks.org/mike/sankey/
 # Load energy projection data
 URL <- paste0(
     "https://cdn.rawgit.com/christophergandrud/networkD3/",

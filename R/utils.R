@@ -3,7 +3,7 @@
 #' @param ... character string to evaluate
 #'
 #' @source A direct import of \code{JS} from Ramnath Vaidyanathan, Yihui Xie,
-#' JJ Allaire, Joe Cheng and Kenton Russell (2015). \link{htmlwidgets}: HTML
+#' JJ Allaire, Joe Cheng and Kenton Russell (2015). htmlwidgets: HTML
 #' Widgets for R. R package version 0.4.
 #'
 #' @export
@@ -25,7 +25,7 @@ JS <- function (...)
 #'
 #' @param dtf a data frame object.
 #' @source Function from:
-#' \url{http://theweiluo.wordpress.com/2011/09/30/r-to-json-for-d3-js-and-protovis/}
+#' \url{https://theweiluo.wordpress.com/2011/09/30/r-to-json-for-d3-js-and-protovis/}
 #' @keywords internal
 #' @noRd
 toJSONarray <- function(dtf){
@@ -133,7 +133,7 @@ margin_handler <- function(margin){
 #' \dontrun{
 #' # Example with data from data frame
 #' # Load data
-#' ## Original data from http://results.ref.ac.uk/DownloadSubmissions/ByUoa/21
+#' ## Original data from https://results.ref.ac.uk/DownloadSubmissions/ByUoa/21
 #' data('SchoolsJournals')
 #'
 #' # Convert to igraph

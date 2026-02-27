@@ -8,3 +8,33 @@
 \description{
 Creates D3 JavaScript Sankey graphs from R. Based on networkD3.
 }
+\seealso{
+Useful links:
+\itemize{
+  \item \url{https://github.com/fbreitwieser/sankeyD3}
+  \item Report bugs at \url{https://github.com/fbreitwieser/sankeyD3/issues}
+}
+
+}
+\author{
+\strong{Maintainer}: Florian Breitwieser \email{florian.bw@gmail.com}
+
+Authors:
+\itemize{
+  \item Christopher Gandrud
+  \item J.J. Allaire
+  \item Kenton Russell
+  \item Mike Bostock (d3.js library, http://d3js.org) [copyright holder]
+}
+
+Other contributors:
+\itemize{
+  \item B.W. Lewis [contributor]
+  \item Kevin Kuo [contributor]
+  \item Charles Sese [contributor]
+  \item Peter Ellis [contributor]
+  \item Jonathan Owen [contributor]
+  \item Jennifer Rogers [contributor]
+}
+
+}
