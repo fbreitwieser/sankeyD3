@@ -2,8 +2,8 @@ Package: sankeyD3
 Type: Package
 Title: D3 JavaScript Sankey Graphs from R
 Description: Creates 'D3' 'JavaScript' Sankey graphs from 'R'.
-Version: 0.3.2
-Date: 2017-03-21
+Version: 0.4.0
+Date: 2026-02-27
 Authors@R: c(
     person("Florian","Breitwieser", email = "florian.bw@gmail.com", role = c("aut","cre")),
     person("Christopher", "Gandrud", role = "aut"),
